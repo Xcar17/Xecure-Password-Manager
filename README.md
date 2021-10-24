@@ -2,6 +2,7 @@
 
 How to run app:
 To use the application you can run the main.py file on a Windows cdm
+You need Python (version 8) and the crypthography python package
 
 How to login:
 In order to login, you can user the username Carlos and Password 12345.
