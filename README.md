@@ -9,7 +9,7 @@ You could also create your own account by selecting 2 (Register)
 in login screen and entering your information.
 
 
-***Testing***
+***Testing***<br />
 Retrieve record:
 You can currently retrieve a test record by entering "Facebook" when prompted to enter name of record
 
