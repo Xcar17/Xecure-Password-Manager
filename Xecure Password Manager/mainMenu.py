@@ -13,6 +13,9 @@ import hashlib
 from msvcrt import getch
 from clear import myExit, clear
 from dashboard import dashBoard
+from dbsetup import add_log
+from dbsetup import next_user_id
+from dbsetup import encryptAll
 
 
 #Promt to ask user for password this will be the setup before the hashing
@@ -103,7 +106,7 @@ def mainMenu():
                     clear()
 
         except Exception:
-            print("\nInvalid Input.")
+            print("\nInvalid Input. 109")
             print("Press any key to try again...")
             getch()
             clear()
@@ -187,10 +190,10 @@ def login():
                     myPtct = protec.replace("Password: ", '')
                     myCmpr = myPtct.rstrip("\n")
                     if passInput == myCmpr:
-                        currentuser = username
+                        currentUser = username
                         clear()
-                        print("Successfully logged in as " + currentuser + "!\n")
-                        usrLoggedIn = ("title Xecure Password Manager (logged in as " + currentuser + ")")
+                        print("Successfully logged in as " + currentUser + "!\n")
+                        usrLoggedIn = ("title Xecure Password Manager (logged in as " + currentUser + ")")
                         os.system(usrLoggedIn)
                         break
 
@@ -210,13 +213,16 @@ def login():
                 #This code will run if the user is fully authenticated
                 clear()
                 print("--------------Logged In-----------------")
-                print("\nThank you for loging in " + username + "\n\nPress any key to go to the Dashboard...")
+                print("\nThank you for logging in " + username + "\n\nPress any key to go to the Dashboard...")
                 getch()
-                dashBoard()
+                dashBoard(currentUser)
                 break
 
-        except Exception:
-            print("\nInvalid Input.")
+        except Exception as e:
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            print(exc_type, fname, exc_tb.tb_lineno)
+            print("\nInvalid Input. TEst")
             print("Press any key to try again...")
             getch()
             clear()
@@ -237,7 +243,7 @@ def getEmail(): #todo Needs validation to make sure no repeat emails accepted
                 break
 
         except Exception:
-            print("\nInvalid Input.")
+            print("\nInvalid Input. 246")
             print("Press any key to try again...")
             getch()
             clear()
@@ -252,7 +258,7 @@ def register():
                 while True:
                     print("--------------Register Screen------------------")
                     if escape == 1:#Makes sure email only gets called once
-                        getEmail()
+                        usrEmail = getEmail()
                         escape += 1
 
                     username = ""
@@ -315,6 +321,16 @@ def register():
                 users.close()
                 clear()
 
+
+                #  get  next user id
+                nxtID = next_user_id()
+
+                # use newID to encrypt username and usrEmail
+                username, usrEmail = encryptAll(nxtID, [username, usrEmail])
+
+
+                add_log(username, usrEmail)#todo make sure username and usrEmail are sanitized
+
                 #User is registered and confirmation message printed to screen
                 print("Thank you for registering " + username + "!\n")
                 print("Press any key to go back to login menu...")
@@ -323,7 +339,7 @@ def register():
                 break
 
          except Exception:
-             print("\nInvalid Input.")
+             print("\nInvalid Input. 342")
              print("Press any key to try again...")
              getch()
              clear()

@@ -8,14 +8,16 @@
 
 from clear import clear
 from msvcrt import getch
+from dbsetup import verify_record, delete_record, delete_all_records
 
 #This function is the settings menu that contains the controls of delete a record, delete all records, change email,
 #change password, change security question (Tentative Feature), and Back to dashboard.
 #Gives users control over their data
-def settings():
+def settings(currentUser):
     clear()
     while True:
         try:
+            userId = input("enter User Id: ") #get_id(currentUser)
             print("--------------Settings------------------")
             # Presents user's with all options available
             print("\nWhat would you like to do?.\n")
@@ -29,10 +31,10 @@ def settings():
             menuSelection = int(input("Selection: "))
 
             if menuSelection == 1:
-                deleteRecord()
+                deleteRecord(userId)
 
             if menuSelection == 2:
-                deleteAllRecords()
+                deleteAllRecords(userId)
 
             if menuSelection == 3:
                 changeEmail()
@@ -64,7 +66,7 @@ def settings():
 
 
 #Function allows users to delete a specified record
-def deleteRecord():
+def deleteRecord(userId):
     clear()
     ready = 1 #flag used to exit loop
     while True:
@@ -84,41 +86,44 @@ def deleteRecord():
                 getch()
                 clear()
 
+
             #todo implement function to find a specific record
-            elif recordSelected == "found":
-                print("\nRecord found!\nPress any key to continue...")
-                getch()
-                clear()
+            else:
+                if recordSelected == verify_record(userId, recordSelected):
+                    print("\nRecord found!\nPress any key to continue...")
+                    getch()
+                    clear()
 
-                confirmation = "0"#Ensures user wants to delete this record
-                #todo implement better input val
-                while confirmation != "1" or confirmation != "2" or confirmation == "0":
-                    print("--------------Delete Record------------------")
-                    print("\nAre you sure you want to delete the " + recordSelected + " record?")
-                    print("[1] Yes")
-                    print("[2] No")
-                    confirmation = input("\nSelection: ")
+                    confirmation = "0"#Ensures user wants to delete this record
+                    #todo implement better input val
+                    while confirmation != "1" or confirmation != "2" or confirmation == "0":
+                        print("--------------Delete Record------------------")
+                        print("\nAre you sure you want to delete the " + recordSelected + " record?")
+                        print("[1] Yes")
+                        print("[2] No")
+                        confirmation = input("\nSelection: ")
 
-                    if confirmation == "1":#If 1 user wants record deleted
-                        ready = 2#Flag is set to exit function
-                        print("\nRecord " + recordSelected + " was deleted!")
-                        #todo implement record deletion
-                        break
+                        if confirmation == "1":#If 1 user wants record deleted
+                            ready = 2#Flag is set to exit function
+                            delete_record(userId, recordSelected)
+                            print("\nRecord " + recordSelected + " was deleted!")
+                            #todo implement record deletion
+                            break
 
-                    elif confirmation == "2":#Record will not be deleted if 2
-                        ready = 2#Flag set to exit function
-                        print("\nRecord was not deleted.")
-                        break
+                        elif confirmation == "2":#Record will not be deleted if 2
+                            ready = 2#Flag set to exit function
+                            print("\nRecord was not deleted.")
+                            break
 
-                    else:#Invalid input
-                        print("\nInvalid Input!\nPress any key to try again...")
-                        getch()
-                        clear()
+                        else:#Invalid input
+                            print("\nInvalid Input!\nPress any key to try again...")
+                            getch()
+                            clear()
 
-            else:#If record not fund
-                print("\nRecord not found!\nPress any key to continue...")
-                getch()
-                clear()
+                else:#If record not fund
+                    print("\nRecord not found!\nPress any key to continue...")
+                    getch()
+                    clear()
 
             if ready == 2:#Function ready to break
                 print("\nPress any key to go back to Settings...")
@@ -134,7 +139,7 @@ def deleteRecord():
 
 
 #Function deletes all record after prompting the user to confirm action
-def deleteAllRecords():
+def deleteAllRecords(userId):
     clear()
     confirmation = "0"
     #todo implement input val
@@ -152,7 +157,8 @@ def deleteAllRecords():
             #todo implement input val
 
             if password == "found":#if password correct delete all records
-                print("All records were deleted!")
+                delete_all_records(userId)
+                print("All records were deleted!************PASSWORD MATCHING FEATURE NEEDS TO BE IMPLEMENTED. ONLY WORK WITH 'found' PASSWORD")
                 # todo implement record deletion
                 break
             else:#invalid rinput
@@ -196,7 +202,7 @@ def changeEmail():
                         newEmail = input("\nPlease enter new email: ")
                         #todo implement function to ensure email is not already being used by someone else
 
-                        if newEmail == "found":#todo change to if email not taken then email changed
+                        if newEmail == "Newfound":#todo change to if email not taken then email changed
                             print("Email changed!\n\nPress any key to go back to Settings...")
                             getch()
                             ready = 2

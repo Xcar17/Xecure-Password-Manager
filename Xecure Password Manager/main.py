@@ -7,6 +7,12 @@
 #This module is the driver of the code
 
 from mainMenu import mainMenu
+from dbsetup import create_database
+
+
+
+create_database()#creates a database with the name entered
+
 
 #Calling program
 mainMenu()
