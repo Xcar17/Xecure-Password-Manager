@@ -12,19 +12,21 @@ in login screen and entering your information.
 
 ***Testing***<br />
 Retrieve record:
-You can currently retrieve a test record by entering "Facebook" when prompted to enter name of record
+Fully Working with encryption
 
 Update record:
-You can currently update a test record by entering "found" on the record name prompt
+Fully Working with encryption
 
 Delete record:
-You can currently delete a test record by entering "found" on the record name prompt
+Encryption function disabled the delete functions, so the delete functions are currently not working and are under development
 
 Delete all records:
-You can currently delete all test records by entering "found" on the account password prompt
+Encryption function disabled the delete functions, so the delete functions are currently not working and are under development
 
 Change Master Email:
-You can currently change email by entering "found" on the account password prompt and "Newfound" as the new account email prompt
+Encryption function disabled this function, under development
 
 Change Master Password:
-You can currently delete all test records by entering "found" on the account password prompt and then anything you wish as the new password
+Encryption function disabled this function, under development
+
+Account Recovery Functions not implemented in current version.
