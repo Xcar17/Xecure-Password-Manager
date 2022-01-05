@@ -106,36 +106,54 @@ def prompt_user2():
 #prompt_user2()
 
 
+##################################################################
+
+TABLES3 = {}
+
+TABLES3['SecTab'] = (
+    "CREATE TABLE IF NOT EXISTS Rec_Sec ("
+    " recordId int(11) NOT NULL AUTO_INCREMENT, userId int, FOREIGN KEY(userId) REFERENCES Registered_Users(id),"
+    " Answer1 varchar(250) NOT NULL, Answer2 varchar(250) NOT NULL, Answer3 varchar(250) NOT NULL, "
+    "Answer4 varchar(250) NOT NULL,  Answer5 varchar(250) NOT NULL,PRIMARY KEY (recordId))"
+)
+
+
+def create_tables3():
+    cursor.execute("USE {}".format(DB_NAME))
+
+    for table_name in TABLES3:
+        table_description = TABLES3[table_name]
+        try:
+            #print("Creating table ({}) ".format(table_name), end="")
+            cursor.execute(table_description)
+        except mysql.connector.Error as err:
+            #if err.errno == errorcode.ER_TABLE_EXISTS_ERROR:
+                #print("Table Already Exists")
+            #else:
+                print(err.msg)
+    db.commit()
+
+
+create_tables3()
+
+
+
+def add_log3(userId, Answer1, Answer2, Answer3, Answer4, Answer5):
+    sql = ("INSERT INTO Rec_Sec(userId, Answer1, Answer2, Answer3, Answer4, Answer5) VALUES (%s, %s, %s, %s, %s, %s)")
+    cursor.execute(sql, (userId, Answer1, Answer2, Answer3, Answer4, Answer5))
+    db.commit()
+    log_id = cursor.lastrowid
+    #print ("Added log {}".format(log_id))
+
+
 #################################################Setup Ends Here##################################################################################################
 
-#todo probably needs t be deleeted
-#This is used to retrieve record, more than likely can be used for for update to find the record to update
-def verify_record(id, name):
-    try:
-        sql = ("SELECT Record_Name FROM User_Records WHERE userId = %s AND Record_Name = %s")
-        cursor.execute(sql, (id, name))
-        result = cursor.fetchone()
-        result = result[0]
-        #for row in result:
-            #print(row)
-    except:
-        result = 'Record not found'
-    return result
-
-#test = verify_record(4, 'New Record')
-#print(test)
-#print(type(test))
-
-
-
-###############################Being Used for sure#####################################################################
-
 def update_record_name(newRecord, id, rcName):
-    oldCiphRecName = fetch_cipher_by_id_gen(id, rcName, "Record_Name")
-    newRecord, rcName = encryptAll(id, [newRecord, rcName])
+    oldCiphRecName = fetch_cipher_by_id_gen(id, rcName, "Record_Name") #Contains current record name
+    newRecord, rcName = encryptAll(id, [newRecord, rcName]) #encrypts both the old and new recordnames to compare
     #try:
     sql = ("UPDATE User_Records SET Record_Name = %s WHERE userId = %s AND Record_Name = %s")
-    cursor.execute(sql, (newRecord, id, oldCiphRecName))
+    cursor.execute(sql, (newRecord, id, oldCiphRecName)) #uses the the current/old record name and Id, to change the record name to the newly encrypted newRecord
     db.commit()
     #except:
     #    print("THAT RECEORD DOESN'T EXIST!")
@@ -176,13 +194,14 @@ def update_record_password(text, id, rcName):
 
 #############################################NOT IMPLEMENTED YET#############################################################################################
 #todo Find way to implement this with current setup. tRY USING fetch_rec_by_id_gen(id, gen_value, gen_cat): TO FIND RECORD THEN DELETE
-def delete_record(id, Record_Name):
+def delete_record(text, id):
+    oldCiphRecName = fetch_cipher_by_id_gen(id, text, "Record_Name") #Contains current record name
     sql = ("DELETE FROM User_Records WHERE userId = %s AND Record_Name = %s")
-    cursor.execute(sql, (id, Record_Name))
+    cursor.execute(sql, (id, oldCiphRecName))
     db.commit()
-    #print("Log " + Record_Name + " Removed!")
+    print("Log Removed!")
 
-#delete_record(6, 'Kitten Mittens')
+#delete_record("Krst@live.com")
 
 
 #todo Find way to implement this with current setup
@@ -263,6 +282,8 @@ def encrypt( id,  plain_text):
 
 def retrieveKey(id):
     key = None
+    if type(id) != str:
+        id = str(id)
     try:
         f = open("database.txt", "r")
 
@@ -330,6 +351,12 @@ def adding_new_enc_record(userId, recordName, recordEmail, recordUser, recordpas
     add_log2(userId, Record_Name, Email, User_Name, Account_Password)
     print("New Encrypted Record was added")
 
+def adding_new_enc_sec_answers(userId, Answer1, Answer2, Answer3, Answer4, Answer5):
+    userId = int(userId)
+    encAnswer1, encAnswer2, encAnswer3, encAnswer4, encAnswer5 = encryptAll(userId, [ Answer1, Answer2, Answer3, Answer4, Answer5])
+    add_log3(userId, encAnswer1, encAnswer2, encAnswer3, encAnswer4, encAnswer5)
+    print("New Encrypted Record was added")
+
 
 
 #todo delete and change everywhere
@@ -379,6 +406,7 @@ def fetch_cipher_by_id_gen(id, recName, gen_cat):
     columns = cursor.fetchall()
     ret_i = [tup[4] for tup in columns if tup[1] == "xecureddb" and tup[2] == "user_records" and tup[3] == gen_cat][0] - 1
     name_i = col_i = [tup[4] for tup in columns if tup[1] == "xecureddb" and tup[2] == "user_records" and tup[3] == "Record_Name"][0] - 1
+
     sql = ("SELECT * FROM User_Records WHERE userId = %s")
     cursor.execute(sql, (id,))
     results = cursor.fetchall()
@@ -401,3 +429,5 @@ def next_user_id():
 
     lastRec = results[-1]
     return lastRec[0] + 1
+
+

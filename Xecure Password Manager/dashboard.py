@@ -11,7 +11,7 @@ import sys
 from clear import clear, myExit
 from settings import settings
 from msvcrt import getch
-from dbsetup import verify_record, add_log2, update_record_name, update_record_email, \
+from dbsetup import add_log2, update_record_name, update_record_email, \
     update_record_username, update_record_password, adding_new_enc_record, fetch_rec_by_id_name, fetch_rec_by_id_gen
 from random_pwd_generator import generate_password
 
@@ -30,7 +30,7 @@ def dashBoard(currentUser):
             print("[1] Retrieve a Record")
             print("[2] Add a New Record")
             print("[3] Update Record")
-            print("[4] View All Records")
+            print("[4] View All Records [**Needs to be implemented, it might just retrieve list of recordnames and nothing else**]")
             print("[5] User Settings")
             print("[6] Logout")
             print("[7] Exit\n")
@@ -393,7 +393,7 @@ def updateRecord(userId):
             getch()
             clear()
 
-
+#todo might not be needed anymor. Definitely not implemented correctly
 # Function will display all of the records of the user
 def viewAll():
     clear()

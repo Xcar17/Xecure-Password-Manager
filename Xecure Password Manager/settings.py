@@ -8,7 +8,7 @@
 
 from clear import clear
 from msvcrt import getch
-from dbsetup import verify_record, delete_record, delete_all_records
+from dbsetup import delete_record, delete_all_records, fetch_rec_by_id_gen
 
 #This function is the settings menu that contains the controls of delete a record, delete all records, change email,
 #change password, change security question (Tentative Feature), and Back to dashboard.
@@ -89,7 +89,8 @@ def deleteRecord(userId):
 
             #todo implement function to find a specific record
             else:
-                if recordSelected == verify_record(userId, recordSelected):
+                test = fetch_rec_by_id_gen(userId, recordSelected, "Record_Name")
+                if recordSelected == test[2]:
                     print("\nRecord found!\nPress any key to continue...")
                     getch()
                     clear()
@@ -105,7 +106,7 @@ def deleteRecord(userId):
 
                         if confirmation == "1":#If 1 user wants record deleted
                             ready = 2#Flag is set to exit function
-                            delete_record(userId, recordSelected)
+                            delete_record(recordSelected, userId)
                             print("\nRecord " + recordSelected + " was deleted!")
                             #todo implement record deletion
                             break

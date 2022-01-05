@@ -4,7 +4,7 @@
 #various sites. Login credentials can only be accessed by the root user. Application uses SHA256 to hash login
 #credentials and encrypts the records of the user inside a secure MySQL database.
 
-#This module contains the Login/Register menu that gives users access to the application and records.
+#This module contai1ns the Login/Register menu that gives users access to the application and records.
 
 import os
 import sys
@@ -15,11 +15,13 @@ from clear import myExit, clear
 from dashboard import dashBoard
 from dbsetup import add_log
 from dbsetup import next_user_id
-from dbsetup import encryptAll
+from dbsetup import encryptAll, add_log3, adding_new_enc_sec_answers
+
+
 
 
 #Promt to ask user for password this will be the setup before the hashing
-def inPassword(prompt='\nPlease enter your password (**PASSWORD VALIDATION NOT IMPLEMENTED**): '): #todo Pwd needs validation
+def masterPwd(prompt='\nPlease enter your password (**PASSWORD VALIDATION NOT IMPLEMENTED**): '): #todo Pwd needs validation
     if sys.stdin is not sys.__stdin__:
         usrPsswd = getpass.getpass(prompt)
         return usrPsswd
@@ -48,6 +50,8 @@ def inPassword(prompt='\nPlease enter your password (**PASSWORD VALIDATION NOT I
                 usrPsswd = usrPsswd + char
 
 
+
+
 #Called when a new user wants to register
 #Checks inside the database to see if the username entered is already in the database
 #If the username is already in the database the user must use another name to register
@@ -60,15 +64,19 @@ def checkStringDatabase(file, string):
     return False
 
 
+
+
 #Opens file that contains Master Account info in order to compare login info (Login procedure)
 def getPsswd():
-    global protec
+    global pwdToCheck
     writeFile = open("accdatabase", "r")
     rL = lookingFor + 1
     ltr = [rL]
     for position, line in enumerate(writeFile):
         if position in ltr:
-            protec = line
+            pwdToCheck = line
+
+
 
 
 #Function checks inside of database for a particular username/password
@@ -79,6 +87,8 @@ def checkLogin(file, string):
             if string in line:
                 return True
     return False
+
+
 
 
 #First screen the user will be greeted with. Contains the login, register, and exit controls.
@@ -110,6 +120,9 @@ def mainMenu():
             print("Press any key to try again...")
             getch()
             clear()
+
+
+
 
 
 #Function for logging in to the appliaction. Asks for
@@ -176,7 +189,7 @@ def login():
                 while True:
 
                     #mpass function is called and it saves the password inside the userPassword variable
-                    userPassword = inPassword()
+                    userPassword = masterPwd()
 
                     #A hash object h is created and it is used to encoded, and hash the password to be validated
                     h = hashlib.pbkdf2_hmac('sha256', userPassword.encode("utf-8"), b'*@#d2', 182)#todo random salt test
@@ -187,7 +200,7 @@ def login():
                     passInput = h.hex()
 
                     getPsswd()#Opens file to read entries and compare passwords later on
-                    myPtct = protec.replace("Password: ", '')
+                    myPtct = pwdToCheck.replace("Password: ", '')
                     myCmpr = myPtct.rstrip("\n")
                     if passInput == myCmpr:
                         currentUser = username
@@ -228,6 +241,10 @@ def login():
             clear()
 
 
+
+
+
+
 #Prompts the user to type in their email. Email will be used to reset account when needed (Future Implementation)
 #Returns the user's email
 def getEmail(): #todo Needs validation to make sure no repeat emails accepted
@@ -249,6 +266,10 @@ def getEmail(): #todo Needs validation to make sure no repeat emails accepted
             clear()
     return useremail
 
+
+
+
+
 #Functions allows new users to create a new account
 def register():
      clear()
@@ -260,6 +281,9 @@ def register():
                     if escape == 1:#Makes sure email only gets called once
                         usrEmail = getEmail()
                         escape += 1
+                        hashEmail = hashlib.pbkdf2_hmac('sha256', usrEmail.encode("utf-8"), b'&%$#f^',
+                                                        182)  # todo implement random salt test
+                        newEmail = hashEmail.hex()
 
                     username = ""
                     while username.isspace() or len(username) < 5 or username.isnumeric():
@@ -303,7 +327,7 @@ def register():
                         #If the username is not already taken the program will continue and the user can enter their psswd
 
                 #The mpass() is called and it will ask the user for the password
-                b = inPassword()              #todo need to implement a way to exit this if the user wants to back out
+                b = masterPwd()              #todo need to implement a way to exit this if the user wants to back out
 
                 # The entered password is encoded, salted and hashed inside the h hash object
                 h = hashlib.pbkdf2_hmac('sha256', b.encode("utf-8"), b'*@#d2', 182)#todo implement random salt test
@@ -314,8 +338,8 @@ def register():
                 #Opens the database.txt in append mode to add the new user account
                 users = open("accdatabase", "a")
 
-                #Writes to the text database.txt the new user information in the specified format
-                users.write("Username: " + newUser + "\nPassword: " + newPass + "\n\n")
+                # Writes to the text database.txt the new user information in the specified format
+                users.write("Email: " + newEmail + "\nUsername: " + newUser + "\nPassword: " + newPass + "\n\n")
 
                 #Closes the file
                 users.close()
@@ -325,6 +349,7 @@ def register():
                 #  get  next user id
                 nxtID = next_user_id()
 
+                topUser = username
                 # use newID to encrypt username and usrEmail
                 username, usrEmail = encryptAll(nxtID, [username, usrEmail])
 
@@ -332,14 +357,83 @@ def register():
                 add_log(username, usrEmail)#todo make sure username and usrEmail are sanitized
 
                 #User is registered and confirmation message printed to screen
-                print("Thank you for registering " + username + "!\n")
+                print("Thank you for registering " + topUser + "!\n")
                 print("Press any key to go back to login menu...")
                 getch()
                 clear()
                 break
 
          except Exception:
+             exc_type, exc_obj, exc_tb = sys.exc_info()
+             fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+             print(exc_type, fname, exc_tb.tb_lineno)
              print("\nInvalid Input. 342")
              print("Press any key to try again...")
              getch()
              clear()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#This function will be called in register and it will save these to DB
+def accountRecovery():
+    clear()
+    while True:
+        try:
+            print("--------------Security Questions------------------")  # Presents user's with all options available
+            print("Please answer these questions truthfully. They will be used to recover your account if you ever"
+                  "need to reset your password.\n")  # Presents user's with all options available
+
+            #todo all input needs validation and loop back to prevent invalid data
+            carColor = input("What was the color of your first car? ")
+            elementarySchool = input("What was the name of your elementary school? ")
+            firstPet = input("What was the name of your first pet? ")
+            nearestSibling = input("In what city does your nearest sibling live? ")
+            childhoodFriend = input("What is the name of your favorite childhood friend? ")
+            adding_new_enc_sec_answers (8 ,carColor, elementarySchool, firstPet, nearestSibling, childhoodFriend)
+            print("Security Questions saved!")
+            break
+
+
+
+        except Exception as e:
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            print(exc_type, fname, exc_tb.tb_lineno)
+            print("\nInvalid Input. 333333")
+            print("Press any key to try again...")
+            getch()
+            clear()
+
+
+#accountRecovery()
+
+
+#todo try to recover security questions, unencrypted
