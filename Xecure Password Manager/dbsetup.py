@@ -190,10 +190,6 @@ def update_record_password(text, id, rcName):
     #print("Log updated!")
 
 
-
-
-#############################################NOT IMPLEMENTED YET#############################################################################################
-#todo Find way to implement this with current setup. tRY USING fetch_rec_by_id_gen(id, gen_value, gen_cat): TO FIND RECORD THEN DELETE
 def delete_record(text, id):
     oldCiphRecName = fetch_cipher_by_id_gen(id, text, "Record_Name") #Contains current record name
     sql = ("DELETE FROM User_Records WHERE userId = %s AND Record_Name = %s")
@@ -201,49 +197,19 @@ def delete_record(text, id):
     db.commit()
     print("Log Removed!")
 
-#delete_record("Krst@live.com")
+def update_master_email(inputEmail, id):
+    encryptedEmail = encrypt(id, inputEmail)
+    #todo finish updating email on DB
+    sql = ("UPDATE Registered_Users SET Email = %s WHERE Id = %s")
+    cursor.execute(sql, (encryptedEmail, id))
+    db.commit()
+    #print("Log updated!")
 
-
-#todo Find way to implement this with current setup
 def delete_all_records(id):
     sql = ("DELETE FROM User_Records WHERE userId = %s")
     cursor.execute(sql, (id,))
     db.commit()
-    #print("Log " + Record_Name + " Removed!")
-
-
-#todo Find a way to do this with current setup. It is not working as is MIGHT SCRAP THIS COULD BE A SECURITY RISK############################################
-def view_all_logs(userId):
-    sql = ("SELECT * FROM User_Records WHERE userId = %s ORDER BY recordId ASC")
-    cursor.execute(sql, (userId,))
-    result = cursor.fetchall()
-
-    #for row in result:
-        #print(row[1])#prints the second column of all the data stored in table Test
-        #print(row)
-    return result
-
-# myTest = view_all_logs(1)
-# theTest =myTest[0]
-#
-# print(theTest[0])
-# print(theTest[1])
-# print(theTest[2])
-# print(theTest[3])
-# print(theTest[4])
-# print(theTest[5])
-#
-# theTest =myTest[1]
-# print(theTest[0])
-# print(theTest[1])
-# print(theTest[2])
-# print(theTest[3])
-# print(theTest[4])
-# print(theTest[5])
-#
-# print(len(myTest))#todo find a way to print all records in a specific format
-#############################################ENF OF NOT IMPLEMENTED YET#############################################################################################
-
+    print("All records have been deleted!")
 
 
 
@@ -330,14 +296,30 @@ def encryptAll(id, list_2_enc):
 
 
 ################################################### DECRYPT/ENCRYPT ###################################################################
+def printAllRecsByID(id, nameOnly = False):
+    # todo implement code that displays "no records found for this account"
 
+    if type(id) != int:
+        id = int(id)
 
-def printRecod(records, name):
-    for record in records:
-        #print(record, type(record))
-        if record[0] == name:
-            print(record[1], decrypt(name, record[1]))
-#print(cursor.fetchall())
+    sql = ("select * from User_Records ")
+    cursor.execute(sql )
+    results = cursor.fetchall()
+
+    if nameOnly:
+        print("Record Names:\n")
+    for rec in results:
+        if rec[1] == id:
+            usrID = rec[1]
+            recID = rec[0]
+            recName = decrypt(usrID, rec[2])
+            email = decrypt(usrID, rec[3])
+            usr_name  = decrypt(usrID, rec[4])
+            acct_pass  = decrypt(usrID, rec[5])
+            if not nameOnly:
+                print(f"Record Name:{recName}\nAccount Email:{email}\nUser Name:{usr_name}\nAccount Password:{acct_pass}\n\n--------------------------\n")
+            else:
+                print(f"\t-{recName}")
 
 
 
@@ -357,26 +339,6 @@ def adding_new_enc_sec_answers(userId, Answer1, Answer2, Answer3, Answer4, Answe
     add_log3(userId, encAnswer1, encAnswer2, encAnswer3, encAnswer4, encAnswer5)
     print("New Encrypted Record was added")
 
-
-
-#todo delete and change everywhere
-#  retrieve all records that match userID1
-def fetch_rec_by_id_name(id, name):
-    #try:
-    #sql = ("SELECT * FROM User_Records WHERE userId = " + str(id) )
-    sql = ("SELECT * FROM User_Records WHERE userId = %s" )
-    cursor.execute(sql, (id,))
-    results = cursor.fetchall()
-    j = 0
-    for rec in results:
-        if decrypt(id, rec[2]) == name:
-            # now decrypt everything else
-            req_rec = [rec[0], rec[1], decrypt(id, rec[2]) ]
-            for i in range(3, len(rec)):
-                req_rec.append(decrypt(id, rec[i]))
-            return req_rec
-    print("Couldn't find record matching id and name")
-    return []
 
 
 def fetch_rec_by_id_gen(id, gen_value, gen_cat):
@@ -431,3 +393,6 @@ def next_user_id():
     return lastRec[0] + 1
 
 
+#print(encrypt(1, 'cror93@gmail.com'))
+#printAllRecsByID(1)
+#delete_all_records(1)

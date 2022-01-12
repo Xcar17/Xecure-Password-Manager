@@ -11,8 +11,8 @@ import sys
 from clear import clear, myExit
 from settings import settings
 from msvcrt import getch
-from dbsetup import add_log2, update_record_name, update_record_email, \
-    update_record_username, update_record_password, adding_new_enc_record, fetch_rec_by_id_name, fetch_rec_by_id_gen
+from dbsetup import update_record_name, update_record_email, printAllRecsByID, \
+    update_record_username, update_record_password, adding_new_enc_record, fetch_rec_by_id_gen
 from random_pwd_generator import generate_password
 
 
@@ -30,10 +30,11 @@ def dashBoard(currentUser):
             print("[1] Retrieve a Record")
             print("[2] Add a New Record")
             print("[3] Update Record")
-            print("[4] View All Records [**Needs to be implemented, it might just retrieve list of recordnames and nothing else**]")
-            print("[5] User Settings")
-            print("[6] Logout")
-            print("[7] Exit\n")
+            print("[4] View All Records")
+            print("[5] View All Record Names Only")
+            print("[6] User Settings")
+            print("[7] Logout")
+            print("[8] Exit\n")
             menuSelection = int(input("Selection: "))
 
             if menuSelection == 1:
@@ -46,12 +47,15 @@ def dashBoard(currentUser):
                 updateRecord(userId)
 
             if menuSelection == 4:
-                viewAll()
+                viewAll(userId)
 
             if menuSelection == 5:
-                settings(currentUser)
+                recordNamesOnly(userId, True)
 
             if menuSelection == 6:
+                settings(currentUser)
+
+            if menuSelection == 7:
                 # This option will let the user sign out and go back to the login screen
                 print("\nAre you sure you want to logout?\n")
                 print("[1] Yes")
@@ -76,12 +80,12 @@ def dashBoard(currentUser):
                     getch()
                     clear()
 
-            if menuSelection == 7:  # This will close the application
+            if menuSelection == 8:  # This will close the application
                 clear()
                 myExit()
 
-            if menuSelection > 7 or menuSelection < 1:  # Input Validation
-                print("\nPlease enter a number between 1 and 7.")
+            if menuSelection > 8 or menuSelection < 1:  # Input Validation
+                print("\nPlease enter a number between 1 and 8.")
                 print("\nPress any key to try again...")
                 getch()
                 clear()
@@ -269,41 +273,6 @@ def updateRecord(userId):
     clear()
     while True:
         try:
-            # while True:
-            #     print(
-            #         "--------------Update Record------------------")  # User needs to name the record they wish to update
-            #     print("\nEnter the name of the record you want to update.")
-            #     oldRecordName = input("\nRecord name: ")  # todo implement input validation
-            #
-            #     if oldRecordName.isspace() or oldRecordName == "":
-            #         print("\nRecord name cannot be empty.")
-            #         print("Press any key to try again...")
-            #         getch()
-            #         clear()
-            #
-            #     elif oldRecordName.isnumeric():
-            #         print("\nRecord name cannot be composed of only numbers.")
-            #         print("Press any key to try again...")
-            #         getch()
-            #         clear()
-            #
-            #
-            #     # # todo look for record and see if its in db
-            #     # elif oldRecordName == verify_record(userId,
-            #     #                                  oldRecordName):  ################################temp code #todo replace with actual found code
-            #     #     print("\nRecord found!")
-            #     #     print("Press any key to continue...")
-            #     #     getch()
-            #     #     clear()
-            #     #     break
-            #
-            #     # else:  # if record not found this will be displayed
-            #     #     print("\n" + oldRecordName + " not found!")
-            #     #     print("Press any key to try again...")
-            #     #     getch()
-            #     #     clear()
-            #
-            # # ready = 1#Flag used to exit loop#todo test if you need this
 
             while True:  # todo implement input validation
                 try:
@@ -393,28 +362,27 @@ def updateRecord(userId):
             getch()
             clear()
 
-#todo might not be needed anymor. Definitely not implemented correctly
-# Function will display all of the records of the user
-def viewAll():
+
+def viewAll(userId):
     clear()
-    # todo implement function that displays all records
-    print("--------------View All Record------------------")
-    print("\n***LIST OF ALL RECORDS WILL BE PRINTED HERE*** (TEMP CODE)")
 
-    print("\nRecord Name: XXXXX")
-    print("Record Email: XXXXX@XXXX.COM")
-    print("Record Username: XXXXX")
-    print("Record Password: **********")
+    print("--------------View All Record------------------\n")
 
-    print("\nRecord Name: XXXXX")
-    print("Record Email: XXXXX@XXXX.COM")
-    print("Record Username: XXXXX")
-    print("Record Password: **********")
+    printAllRecsByID(userId)
+    #todo implement code that displays "no records for this account"
 
-    print("\nRecord Name: XXXXX")
-    print("Record Email: XXXXX@XXXX.COM")
-    print("Record Username: XXXXX")
-    print("Record Password: **********")
+    print("\n\nPress any key to go back to Dashboard...")
+    getch()
+    clear()
+
+
+def recordNamesOnly(userId, value):
+    clear()
+
+    print("--------------View All Record------------------\n")
+
+    printAllRecsByID(userId, value)
+    #todo implement code that displays "no records for this account"
 
     print("\n\nPress any key to go back to Dashboard...")
     getch()

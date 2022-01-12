@@ -138,6 +138,7 @@ def login():
                 print("Press any key to go back to the login screen...")
                 getch()
                 clear()
+                break
                 #The application will loop back to the log in menu after the error message is displayed
 
 

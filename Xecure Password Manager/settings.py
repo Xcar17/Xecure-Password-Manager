@@ -9,6 +9,7 @@
 from clear import clear
 from msvcrt import getch
 from dbsetup import delete_record, delete_all_records, fetch_rec_by_id_gen
+from passwordRecovery import update_master_password, changeMasterEmail
 
 #This function is the settings menu that contains the controls of delete a record, delete all records, change email,
 #change password, change security question (Tentative Feature), and Back to dashboard.
@@ -25,8 +26,8 @@ def settings(currentUser):
             print("[2] Delete All Records")
             print("[3] Change Master Account Email")
             print("[4] Change Master Account Password")
-            print("[5] Change Security Questions (FEATURE IS TENTATIVE)")
-            print("[6] Back to Dashboard\n")
+            #print("[5] Change Security Questions (FEATURE IS TENTATIVE)")
+            print("[5] Back to Dashboard\n")
 
             menuSelection = int(input("Selection: "))
 
@@ -37,18 +38,18 @@ def settings(currentUser):
                 deleteAllRecords(userId)
 
             if menuSelection == 3:
-                changeEmail()
+                changeEmail(userId)
 
             if menuSelection == 4:
-                changePassword()
+                update_master_password()
+
+            # if menuSelection == 5:
+            #     print("\nThis will call function lets user change Security Questions (FEATURE TENTATIVE)")
+            #     print("Press any key to continue...")
+            #     getch()
+            #     clear()
 
             if menuSelection == 5:
-                print("\nThis will call function lets user change Security Questions (FEATURE TENTATIVE)")
-                print("Press any key to continue...")
-                getch()
-                clear()
-
-            if menuSelection == 6:
                 clear()
                 break
 
@@ -154,18 +155,19 @@ def deleteAllRecords(userId):
         if confirmation == "1":
             #todo implement function that validates user password
             print("***Function will be called that ask user for password and if it matches records will be deleted.***")
-            password = input("\nPlease enter master account password: ")
+            #password = input("\nPlease enter master account password: ")
             #todo implement input val
 
-            if password == "found":#if password correct delete all records
-                delete_all_records(userId)
-                print("All records were deleted!************PASSWORD MATCHING FEATURE NEEDS TO BE IMPLEMENTED. ONLY WORK WITH 'found' PASSWORD")
+            #if password == "found":#if password correct delete all records
+            delete_all_records(userId)
+            break
+                #print("All records were deleted!************PASSWORD MATCHING FEATURE NEEDS TO BE IMPLEMENTED. ONLY WORK WITH 'found' PASSWORD")
                 # todo implement record deletion
-                break
-            else:#invalid rinput
-                print("\nIncorrect Password.\nPress any key to go back...")
-                getch()
-                clear()
+
+            #else:#invalid rinput
+                #print("\nIncorrect Password.\nPress any key to go back...")
+                #getch()
+                #clear()
 
         elif confirmation == "2":#If no then records will not be deleted
             print("\nNo record will be deleted.")
@@ -182,48 +184,21 @@ def deleteAllRecords(userId):
 
 
 #Function allows user to change their email after confirming their password
-def changeEmail():
+def changeEmail(userId):
     clear()
     ready = 0#flag used to exit loop
     while True:
         try:
-            password = ""#todo implement input val
-            while password == "" or password.isspace() or len(password) < 5:
-                print("--------------Change Email------------------")
-                password = input("\nPlease enter master account password: ")
-                # todo implement function that verified password
-                if password == "found":#if password found
-                    print("Authentication completed!\n\nPress any key to continue...")
-                    getch()
-                    newEmail = ""
-                    # todo implement input val for email
-                    while newEmail == "" or newEmail.isspace() or len(newEmail) < 5 or ready != 2:
-                        clear()
-                        print("--------------Change Email------------------")
-                        newEmail = input("\nPlease enter new email: ")
-                        #todo implement function to ensure email is not already being used by someone else
 
-                        if newEmail == "Newfound":#todo change to if email not taken then email changed
-                            print("Email changed!\n\nPress any key to go back to Settings...")
-                            getch()
-                            ready = 2
-                            break
-                        else:#invalid input #todo might need to be chaged?
-                            print("\nInvalid Password.\nPress any key to go back...")
-                            getch()
-                            clear()
-
-                else:#invalid input
-                    print("\nInvalid Password.\nPress any key to go back...")
-                    getch()
-                    clear()
-
-            if ready == 2:#Function ready to exit
-                clear()
+            exit = changeMasterEmail(userId)
+            if exit == False:
                 break
 
+            else:
+                print("Something went wrong...****create a confirm/exit function*****")
+
         except Exception:
-            print("\nInvalid Input.")
+            print("\nInvalid Input. Error 6010")
             print("Press any key to try again...")
             getch()
             clear()
@@ -232,33 +207,11 @@ def changeEmail():
 #Function used to change the user's master account password
 def changePassword():
     clear()
-    ready = 0 #flag used to exit loop
     while True:
         try:
-            password = ""#Asks user for current password
-            while password == "" or password.isspace() or len(password) < 5:
-                #todo implement function that verified password
-                print("--------------Change Master Password------------------")
-                password = input("\nPlease enter master account password: ")
 
-                if password == "found":#If user password was correct they can enter new password
-                    print("Authentication completed!")
+            update_master_password()
 
-                    password = input("\nPlease enter new password: ")#todo implement inut verification
-                    #todo ask the user to enter password again to ensure no typos
-                    print("Password changed!\n\nPress any key to go back to Settings...")
-                    getch()
-                    ready = 2#flag set and now loop will exit
-                    break
-
-                else:#Invalid Input
-                    print("\nInvalid Password.\nPress any key to go back...")
-                    getch()
-                    clear()
-
-            if ready == 2:#Function will exit
-                clear()
-                break
 
         except Exception:
             print("\nInvalid Input.")
