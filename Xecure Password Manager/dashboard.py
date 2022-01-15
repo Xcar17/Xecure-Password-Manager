@@ -11,6 +11,8 @@ import sys
 from clear import clear, myExit
 from settings import settings
 from msvcrt import getch
+import pyperclip
+import time
 from dbsetup import update_record_name, update_record_email, printAllRecsByID, \
     update_record_username, update_record_password, adding_new_enc_record, fetch_rec_by_id_gen
 from random_pwd_generator import generate_password
@@ -19,12 +21,12 @@ from random_pwd_generator import generate_password
 # Once the user logs into the application this function will be called. This is the primary menu
 # It contains controls for retrieving a record, adding a record, updating a record, viewing all records, user settings
 # The users can also logout and exit the application from this screen
-def dashBoard(currentUser):
+def dashBoard(currentUser, usrId):
     clear()
+    pyperclip.copy("")
     while True:
         try:
 
-            userId = input("enter User Id: ") #get_id(currentUser)
             print("--------------Dash Board------------------")  # Presents user's with all options available
             print("\nPlease select between the following options.\n")
             print("[1] Retrieve a Record")
@@ -38,22 +40,22 @@ def dashBoard(currentUser):
             menuSelection = int(input("Selection: "))
 
             if menuSelection == 1:
-                getRecord(userId)
+                getRecord(usrId)
 
             if menuSelection == 2:
-                addRecord(userId)
+                addRecord(usrId)
 
             if menuSelection == 3:
-                updateRecord(userId)
+                updateRecord(usrId)
 
             if menuSelection == 4:
-                viewAll(userId)
+                viewAll(usrId)
 
             if menuSelection == 5:
-                recordNamesOnly(userId, True)
+                recordNamesOnly(usrId, True)
 
             if menuSelection == 6:
-                settings(currentUser)
+                settings(currentUser, usrId)
 
             if menuSelection == 7:
                 # This option will let the user sign out and go back to the login screen
@@ -139,6 +141,10 @@ def getRecord(userId):
                     print(recordName + " Account Email: " + test[3])
                     print(recordName + " Account Username: " + test[4])
                     print(recordName + " Account Password: " + test[5])
+                    pyperclip.copy(test[5])
+                    print("Your password will be saved to your clipboard for only 12 seconds....(**MAYBE DO SOMETHING ELSE INSTEAD OF WAIT**)")
+                    time.sleep(12)
+                    pyperclip.copy("")
                     print("Press any key to go back to Dashboard...")
                     getch()
                     clear()

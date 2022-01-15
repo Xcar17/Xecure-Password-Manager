@@ -16,11 +16,13 @@ from dashboard import dashBoard
 from dbsetup import add_log
 from dbsetup import next_user_id
 from dbsetup import encryptAll, add_log3, adding_new_enc_sec_answers
+from passwordRecovery import usernameRecovery, idRecovery, update_master_password, verifyIDByName, verifyIDByEmail
 
 
 
 
-#Promt to ask user for password this will be the setup before the hashing
+#Function replaces input text as * in the cmd as the user enters their password. This is used so that the password is
+#not displayed to the screen for others to see.
 def masterPwd(prompt='\nPlease enter your password (**PASSWORD VALIDATION NOT IMPLEMENTED**): '): #todo Pwd needs validation
     if sys.stdin is not sys.__stdin__:
         usrPsswd = getpass.getpass(prompt)
@@ -96,21 +98,25 @@ def mainMenu():
     os.system("title Xecure Password Manager")#Changes title of screen
     while True:
         try:
+                clear()
                 print("--------------Main Menu------------------")
                 print("\nPlease select between the following options.\n")#Presents user's with all options available
                 print("[1] Login")
                 print("[2] Register")
-                print("[3] Exit\n")
+                print("[3] Forgot Login")
+                print("[4] Exit\n")
                 menuSelection = int(input("Selection: "))
 
                 if menuSelection == 1:
                     login()
                 if menuSelection == 2:
                     register()
-                if menuSelection ==  3:
+                if menuSelection == 3:
+                    forgotLogin()
+                if menuSelection == 4:
                     myExit()
-                if menuSelection > 3 or menuSelection < 1: #numbers higher or lower than valid cases
-                    print("\nPlease enter a number between 1 and 3.")
+                if menuSelection > 4 or menuSelection < 1: #numbers higher or lower than valid cases
+                    print("\nPlease enter a number between 1 and 4.")
                     print("\nPress any key to try again...")
                     getch()
                     clear()
@@ -205,11 +211,28 @@ def login():
                     myCmpr = myPtct.rstrip("\n")
                     if passInput == myCmpr:
                         currentUser = username
-                        clear()
-                        print("Successfully logged in as " + currentUser + "!\n")
-                        usrLoggedIn = ("title Xecure Password Manager (logged in as " + currentUser + ")")
-                        os.system(usrLoggedIn)
-                        break
+                        usrId = input("Please enter your userId: ")
+                        lastCMPR = verifyIDByName(username)
+
+                        if usrId == str(lastCMPR):
+                            clear()
+                            print("Successfully logged in as " + currentUser + "!\n")
+                            usrLoggedIn = ("title Xecure Password Manager (logged in as " + currentUser + ")")
+                            os.system(usrLoggedIn)
+                            break
+
+                        else:
+                            errorCount -= 1  # failed login counter
+                            if userPassword == "":
+                                print("\nA password is required.")
+                            else:
+                                print("\nInvalid login.")
+
+                            if errorCount == 1:
+                                print("The application will close after another failed login attempt")
+                            if errorCount == 0:  # application exits
+                                # todo implement lockout feature
+                                exit(0)
 
                     else:
                         errorCount -= 1#failed login counter
@@ -229,7 +252,7 @@ def login():
                 print("--------------Logged In-----------------")
                 print("\nThank you for logging in " + username + "\n\nPress any key to go to the Dashboard...")
                 getch()
-                dashBoard(currentUser)
+                dashBoard(currentUser, usrId)
                 break
 
         except Exception as e:
@@ -358,8 +381,11 @@ def register():
                 add_log(username, usrEmail)#todo make sure username and usrEmail are sanitized
 
                 #User is registered and confirmation message printed to screen
-                print("Thank you for registering " + topUser + "!\n")
-                print("Press any key to go back to login menu...")
+                print("--------------UserID------------------")
+                print("\nYour userID is:")
+                print("\t" + str(nxtID))
+                print("\nPlease make sure to remember this userID as it will be used to log in.")
+                print("\nPress any key to go back to login menu...")
                 getch()
                 clear()
                 break
@@ -378,31 +404,42 @@ def register():
 
 
 
+def forgotLogin():
+    while True:
+        try:
+            clear()
+            print("-------------- Login Help ------------------")
+            print("\nPlease select between the following options.\n")  # Presents user's with all options available
+            print("[1] Forgot Username")
+            print("[2] Forgot UserID")
+            print("[3] Forgot Password")
+            print("[4] Back to login screen\n")
+            menuSelection = int(input("Selection: "))
+
+            if menuSelection == 1:
+                usernameRecovery()
+            if menuSelection == 2:
+                idRecovery()
+            if menuSelection == 3:
+                update_master_password()
+            if menuSelection == 4:
+                break
+            if menuSelection > 4 or menuSelection < 1:  # numbers higher or lower than valid cases
+                print("\nPlease enter a number between 1 and 4.")
+                print("\nPress any key to try again...")
+                getch()
+                clear()
+
+        except Exception:
+            print("\nInvalid Input. 109")
+            print("Press any key to try again...")
+            getch()
+            clear()
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+############################################NOT IMPLEMENTED & TENTATIVE#################################################
 #This function will be called in register and it will save these to DB
 def accountRecovery():
     clear()
@@ -422,8 +459,6 @@ def accountRecovery():
             print("Security Questions saved!")
             break
 
-
-
         except Exception as e:
             exc_type, exc_obj, exc_tb = sys.exc_info()
             fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
@@ -432,9 +467,3 @@ def accountRecovery():
             print("Press any key to try again...")
             getch()
             clear()
-
-
-#accountRecovery()
-
-
-#todo try to recover security questions, unencrypted

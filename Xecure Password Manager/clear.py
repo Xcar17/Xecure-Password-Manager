@@ -8,6 +8,7 @@
 
 import os
 from msvcrt import getch
+import pyperclip
 
 #Function to clear cmd
 def clear():
@@ -16,6 +17,7 @@ def clear():
 #Function to exit program when called
 def myExit():
     while True:
+        pyperclip.copy("")#Used to ensure clipboard is cleared before closing application.
         try:
             #Asks the user to confirm the action to exit
             print("\nAre you sure you want to exit?\n")

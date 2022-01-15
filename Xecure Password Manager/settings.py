@@ -14,11 +14,10 @@ from passwordRecovery import update_master_password, changeMasterEmail
 #This function is the settings menu that contains the controls of delete a record, delete all records, change email,
 #change password, change security question (Tentative Feature), and Back to dashboard.
 #Gives users control over their data
-def settings(currentUser):
+def settings(currentUser, userId):
     clear()
     while True:
         try:
-            userId = input("enter User Id: ") #get_id(currentUser)
             print("--------------Settings------------------")
             # Presents user's with all options available
             print("\nWhat would you like to do?.\n")

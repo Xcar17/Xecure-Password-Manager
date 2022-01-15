@@ -6,6 +6,8 @@ from dbsetup import decrypt, update_master_email
 from random_pwd_generator import generate_password
 import smtplib
 import hashlib
+from msvcrt import getch
+from clear import myExit, clear
 
 def sendEmail(email, code, retreival=None):
     # creates SMTP session
@@ -72,13 +74,12 @@ def update_master_password():
         sendEmail(email, code)
         answer = input("Please enter the code that was just sent to the email: " + email + "\n")
         if code == answer:
-            print("Recovered!!  Here is where we would redirect to updating password code ")
 
             hashEmail = hashlib.pbkdf2_hmac('sha256', email.encode("utf-8"), b'&%$#f^',
                                             182)  # todo implement random salt test
             newEmail = hashEmail.hex()
 
-            inputPass = input("Pleae enter new Password")
+            inputPass = input("Please enter new Password")
             newPassword = hashlib.pbkdf2_hmac('sha256', inputPass.encode("utf-8"), b'*@#d2',
                                             182).hex()
             #update password in acc databae
@@ -91,6 +92,10 @@ def update_master_password():
 
     else:
         print(f"Email: {email} was not found.")
+
+    print("\nPress any key to go back...")
+    getch()
+    clear()
 
 
 def changeMasterEmail(id=None): #':+()6\\zx!illp}}(N~'
@@ -146,6 +151,28 @@ def retrieveID(email):
             sendEmail(email, str(rec[0]), "ID")
     return False
 
+def verifyIDByName(usrName):
+    # try:
+    sql = ("select * from Registered_Users ")
+    cursor.execute(sql )
+    results = cursor.fetchall()
+
+    for rec in results:
+        if decrypt(rec[0], rec[1]) == usrName:
+            return rec[0]
+    return False
+
+def verifyIDByEmail(usrName):
+    # try:
+    sql = ("select * from Registered_Users ")
+    cursor.execute(sql )
+    results = cursor.fetchall()
+
+    for rec in results:
+        if decrypt(rec[0], rec[2]) == usrName:
+            return rec[0]
+    return False
+
 def usernameRecovery():
     email = input("Please enter the email associated with your account:")
     if verifyEmail(email):
@@ -155,6 +182,11 @@ def usernameRecovery():
         print("Username has been sent to the Email associated with the account.")
     else:
         print(f"Email: {email} was not found.")
+
+    print("\nPress any key to go back...")
+    getch()
+    clear()
+
 
 def idRecovery():
     email = input("Please enter the email associated with your account:")
@@ -166,5 +198,12 @@ def idRecovery():
     else:
         print(f"Email: {email} was not found.")
 
+    print("\nPress any key to go back...")
+    getch()
+    clear()
+
+print(verifyIDByName("Xecured"))
+print(verifyIDByEmail("xecureddb@gmail.com"))
 
 #if __name__ == "__main__":
+
