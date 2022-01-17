@@ -124,15 +124,9 @@ def getRecord(userId):
             else:
                 print("Program will search for record.\n")
 
-                #userId1 = input("Enter ****userId: ")
-                #recordname1 = input("Enter ****record Name: ")
                 userId1 = str(userId)
-
                 recordname1 = recordName
-                #test = fetch_rec_by_id_name(userId1, recordname1)
                 test = fetch_rec_by_id_gen(userId1, recordname1, "Record_Name" )
-                #print(test)
-                getch()
 
                 if recordname1 == test[2]:  # todo replace with code to check if record is in database
 
@@ -141,21 +135,22 @@ def getRecord(userId):
                     print(recordName + " Account Email: " + test[3])
                     print(recordName + " Account Username: " + test[4])
                     print(recordName + " Account Password: " + test[5])
+
+                    #todo fix copy timer, sleep is not a good fit
                     pyperclip.copy(test[5])
-                    print("Your password will be saved to your clipboard for only 12 seconds....(**MAYBE DO SOMETHING ELSE INSTEAD OF WAIT**)")
-                    time.sleep(12)
+                    print("\nYour password will be saved to your clipboard for only 5 seconds....(**MAYBE DO SOMETHING ELSE INSTEAD OF WAIT/SLEEP**)")
+                    time.sleep(5)
                     pyperclip.copy("")
                     print("Press any key to go back to Dashboard...")
                     getch()
                     clear()
                     break  # breaks to go back to dashboard
                 else:
-                    print(
-                        recordName + " record not found.")  # todo implement if statement that detects if record was found
-                    print(
-                        "Press any key to search for another record...")  # todo might need to ask if they wan to try again of go back to menu
+                    print( recordName + " record not found.")
+                    print("Press any key to go back...")
                     getch()
                     clear()
+                    break
 
         except Exception:
             print("\nInvalid Input. 10001")
@@ -377,7 +372,7 @@ def viewAll(userId):
     printAllRecsByID(userId)
     #todo implement code that displays "no records for this account"
 
-    print("\n\nPress any key to go back to Dashboard...")
+    print("\nPress any key to go back to Dashboard...")
     getch()
     clear()
 

@@ -331,13 +331,11 @@ def adding_new_enc_record(userId, recordName, recordEmail, recordUser, recordpas
     Account_Password = recordpassword
     Record_Name, Email, User_Name, Account_Password =  encryptAll(userId, [ Record_Name, Email, User_Name, Account_Password])
     add_log2(userId, Record_Name, Email, User_Name, Account_Password)
-    print("New Encrypted Record was added")
 
 def adding_new_enc_sec_answers(userId, Answer1, Answer2, Answer3, Answer4, Answer5):
     userId = int(userId)
     encAnswer1, encAnswer2, encAnswer3, encAnswer4, encAnswer5 = encryptAll(userId, [ Answer1, Answer2, Answer3, Answer4, Answer5])
     add_log3(userId, encAnswer1, encAnswer2, encAnswer3, encAnswer4, encAnswer5)
-    print("New Encrypted Record was added")
 
 
 
@@ -358,8 +356,8 @@ def fetch_rec_by_id_gen(id, gen_value, gen_cat):
             for i in range(2, len(rec)):
                 req_rec.append(decrypt(id, rec[i]))
             return req_rec
-    print("Couldn't find record matching id and name")
-    return []
+    #print("Couldn't find record matching id and name")
+    return "Record not Found..."
 
 def fetch_cipher_by_id_gen(id, recName, gen_cat):
     # try:
@@ -391,8 +389,3 @@ def next_user_id():
 
     lastRec = results[-1]
     return lastRec[0] + 1
-
-
-#print(encrypt(1, 'cror93@gmail.com'))
-#printAllRecsByID(1)
-#delete_all_records(1)

@@ -17,10 +17,12 @@ def clear():
 #Function to exit program when called
 def myExit():
     while True:
+        clear()
         pyperclip.copy("")#Used to ensure clipboard is cleared before closing application.
         try:
-            #Asks the user to confirm the action to exit
-            print("\nAre you sure you want to exit?\n")
+            #Asks the user to confirm the action to
+            print("--------------Exit------------------")
+            print("\nAre you sure you want to exit and close the application?\n")
             print("[1] Yes")
             print("[2] No\n")
             end = int(input("Selection: "))
@@ -34,7 +36,7 @@ def myExit():
                 break
             else:#invalid input
                 print("\nPlease enter a number between 1 and 2.")
-                print("\nPress any key to try again...")
+                print("Press any key to try again...")
                 getch()
                 clear()
 

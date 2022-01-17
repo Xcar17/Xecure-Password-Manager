@@ -19,15 +19,12 @@ from dbsetup import encryptAll, add_log3, adding_new_enc_sec_answers
 from passwordRecovery import usernameRecovery, idRecovery, update_master_password, verifyIDByName, verifyIDByEmail
 
 
-
-
 #Function replaces input text as * in the cmd as the user enters their password. This is used so that the password is
 #not displayed to the screen for others to see.
-def masterPwd(prompt='\nPlease enter your password (**PASSWORD VALIDATION NOT IMPLEMENTED**): '): #todo Pwd needs validation
+def hidePassword(prompt='\nPlease enter your password: '): #todo Pwd needs validation
     if sys.stdin is not sys.__stdin__:
         usrPsswd = getpass.getpass(prompt)
         return usrPsswd
-
     else:
         usrPsswd = ""
         sys.stdout.write(prompt)
@@ -44,7 +41,6 @@ def masterPwd(prompt='\nPlease enter your password (**PASSWORD VALIDATION NOT IM
                     sys.stdout.write('\b' + ' ' + '\b')
                     sys.stdout.flush()
                     usrPsswd = usrPsswd[:-1]
-
             else:
                 char = chr(myKey)
                 sys.stdout.write('*')
@@ -52,11 +48,8 @@ def masterPwd(prompt='\nPlease enter your password (**PASSWORD VALIDATION NOT IM
                 usrPsswd = usrPsswd + char
 
 
-
-
-#Called when a new user wants to register
-#Checks inside the database to see if the username entered is already in the database
-#If the username is already in the database the user must use another name to register
+#Called when a new user wants to register. Checks inside the db to see if the username entered is already in the db
+#If the username is already in the db the user must use another name to register
 #Returns true if username is taken and false if it's available
 def checkStringDatabase(file, string):
     with open(file, 'r') as read:     #Opens file and checks every line for user name
@@ -64,9 +57,6 @@ def checkStringDatabase(file, string):
             if string in line:
                 return True
     return False
-
-
-
 
 #Opens file that contains Master Account info in order to compare login info (Login procedure)
 def getPsswd():
@@ -77,9 +67,6 @@ def getPsswd():
     for position, line in enumerate(writeFile):
         if position in ltr:
             pwdToCheck = line
-
-
-
 
 #Function checks inside of database for a particular username/password
 def checkLogin(file, string):
@@ -100,7 +87,7 @@ def mainMenu():
         try:
                 clear()
                 print("--------------Main Menu------------------")
-                print("\nPlease select between the following options.\n")#Presents user's with all options available
+                print("\nPlease select between the following options:\n")#Presents user's with all options available
                 print("[1] Login")
                 print("[2] Register")
                 print("[3] Forgot Login")
@@ -117,12 +104,12 @@ def mainMenu():
                     myExit()
                 if menuSelection > 4 or menuSelection < 1: #numbers higher or lower than valid cases
                     print("\nPlease enter a number between 1 and 4.")
-                    print("\nPress any key to try again...")
+                    print("Press any key to try again...")
                     getch()
                     clear()
 
         except Exception:
-            print("\nInvalid Input. 109")
+            print("\nInvalid Input.")
             print("Press any key to try again...")
             getch()
             clear()
@@ -196,7 +183,7 @@ def login():
                 while True:
 
                     #mpass function is called and it saves the password inside the userPassword variable
-                    userPassword = masterPwd()
+                    userPassword = hidePassword()
 
                     #A hash object h is created and it is used to encoded, and hash the password to be validated
                     h = hashlib.pbkdf2_hmac('sha256', userPassword.encode("utf-8"), b'*@#d2', 182)#todo random salt test
@@ -351,7 +338,7 @@ def register():
                         #If the username is not already taken the program will continue and the user can enter their psswd
 
                 #The mpass() is called and it will ask the user for the password
-                b = masterPwd()              #todo need to implement a way to exit this if the user wants to back out
+                b = hidePassword()              #todo need to implement a way to exit this if the user wants to back out
 
                 # The entered password is encoded, salted and hashed inside the h hash object
                 h = hashlib.pbkdf2_hmac('sha256', b.encode("utf-8"), b'*@#d2', 182)#todo implement random salt test
@@ -400,16 +387,12 @@ def register():
              clear()
 
 
-
-
-
-
 def forgotLogin():
     while True:
         try:
             clear()
-            print("-------------- Login Help ------------------")
-            print("\nPlease select between the following options.\n")  # Presents user's with all options available
+            print("--------------Login Help------------------")
+            print("\nPlease select between the following options:\n")  # Presents user's with all options available
             print("[1] Forgot Username")
             print("[2] Forgot UserID")
             print("[3] Forgot Password")
@@ -426,12 +409,12 @@ def forgotLogin():
                 break
             if menuSelection > 4 or menuSelection < 1:  # numbers higher or lower than valid cases
                 print("\nPlease enter a number between 1 and 4.")
-                print("\nPress any key to try again...")
+                print("Press any key to try again...")
                 getch()
                 clear()
 
         except Exception:
-            print("\nInvalid Input. 109")
+            print("\nInvalid Input.")
             print("Press any key to try again...")
             getch()
             clear()

@@ -67,36 +67,54 @@ def updateAcctPass(acctDataFile, origEmail, newData, forPass=True):
     adf_w.close()
 
 def update_master_password():
-    email = input("Please enter the email associated with your account:")
-    if verifyEmail(email):
-        #generate the code and email it to user
-        code = generate_password()
-        sendEmail(email, code)
-        answer = input("Please enter the code that was just sent to the email: " + email + "\n")
-        if code == answer:
+    while True:
+        try:
+            clear()
+            print("--------------Reset Password------------------")
+            print("\n**Verification is needed in order to reset your password**")
+            print("\nPlease enter the email associated with your account:")
+            email = input("Email: ")
 
-            hashEmail = hashlib.pbkdf2_hmac('sha256', email.encode("utf-8"), b'&%$#f^',
-                                            182)  # todo implement random salt test
-            newEmail = hashEmail.hex()
+            if verifyEmail(email):
+                #generates a verification code and emails it to user
+                code = generate_password()
+                sendEmail(email, code)
+                clear()
+                print("--------------Reset Password------------------")
+                print("\nPlease enter the code that was just sent to the email:")
+                answer = input("Code: ")
 
-            inputPass = input("Please enter new Password")
-            newPassword = hashlib.pbkdf2_hmac('sha256', inputPass.encode("utf-8"), b'*@#d2',
-                                            182).hex()
-            #update password in acc databae
-            updateAcctPass('accdatabase', newEmail, newPassword)
-            print("Password has been updated!")
+                if code == answer:
 
+                    hashEmail = hashlib.pbkdf2_hmac('sha256', email.encode("utf-8"), b'&%$#f^',182)# todo implement random salt test
+                    newEmail = hashEmail.hex()
 
-        else:
-            print('Code does not match')
+                    clear()
+                    print("--------------Reset Password------------------")
+                    print("\n**Email verified** \n\nPlease enter a new password:")
+                    inputPass = input("New Password: ")
+                    newPassword = hashlib.pbkdf2_hmac('sha256', inputPass.encode("utf-8"), b'*@#d2',182).hex()
 
-    else:
-        print(f"Email: {email} was not found.")
+                    #updates password in accdatabase db document
+                    updateAcctPass('accdatabase', newEmail, newPassword)
+                    print("\nPassword has been updated!")
 
-    print("\nPress any key to go back...")
-    getch()
-    clear()
+                else:
+                    print('\nThe code entered does not match.')
 
+            else:
+                print(f"\nThe {email} email was not found.")
+
+            print("Press any key to go back...")
+            getch()
+            clear()
+            break
+
+        except Exception:
+            print("\nInvalid Input.")
+            print("Press any key to try again...")
+            getch()
+            clear()
 
 def changeMasterEmail(id=None): #':+()6\\zx!illp}}(N~'
     email = input("Please enter the email associated with your account:")
@@ -174,36 +192,51 @@ def verifyIDByEmail(usrName):
     return False
 
 def usernameRecovery():
-    email = input("Please enter the email associated with your account:")
-    if verifyEmail(email):
-        #generate the code and email it to user
-        #code = generate_password()
-        retrieveUsername(email)
-        print("Username has been sent to the Email associated with the account.")
-    else:
-        print(f"Email: {email} was not found.")
+    while True:
+        try:
+            clear()
+            print("--------------Username Recovery------------------")
+            print("\nPlease enter the email associated with your account:\n")
+            email = input("Email: ")
 
-    print("\nPress any key to go back...")
-    getch()
-    clear()
+            if verifyEmail(email):
+                retrieveUsername(email)
+                print("\nUsername has been sent to the Email associated with the account.")
+            else:
+                print(f"\nThe {email} email was not found.")
 
+            print("Press any key to go back...")
+            getch()
+            clear()
+            break
+
+        except Exception:
+            print("\nInvalid Input.")
+            print("Press any key to try again...")
+            getch()
+            clear()
 
 def idRecovery():
-    email = input("Please enter the email associated with your account:")
-    if verifyEmail(email):
-        #generate the code and email it to user
-        #code = generate_password()
-        retrieveID(email)
-        print("ID has been sent to the Email associated with the account.")
-    else:
-        print(f"Email: {email} was not found.")
+    while True:
+        try:
+            clear()
+            print("--------------Id Recovery------------------")
+            print("\nPlease enter the email associated with your account:\n")
+            email = input("Email: ")
 
-    print("\nPress any key to go back...")
-    getch()
-    clear()
+            if verifyEmail(email):
+                retrieveID(email)
+                print("\nID has been sent to the Email associated with the account.")
+            else:
+                print(f"\nThe {email} email was not found.")
 
-print(verifyIDByName("Xecured"))
-print(verifyIDByEmail("xecureddb@gmail.com"))
+            print("Press any key to go back...")
+            getch()
+            clear()
+            break
 
-#if __name__ == "__main__":
-
+        except Exception:
+            print("\nInvalid Input.")
+            print("Press any key to try again...")
+            getch()
+            clear()
