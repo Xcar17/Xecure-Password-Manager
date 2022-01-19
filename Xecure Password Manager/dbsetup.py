@@ -195,7 +195,6 @@ def delete_record(text, id):
     sql = ("DELETE FROM User_Records WHERE userId = %s AND Record_Name = %s")
     cursor.execute(sql, (id, oldCiphRecName))
     db.commit()
-    print("Log Removed!")
 
 def update_master_email(inputEmail, id):
     encryptedEmail = encrypt(id, inputEmail)
@@ -209,7 +208,7 @@ def delete_all_records(id):
     sql = ("DELETE FROM User_Records WHERE userId = %s")
     cursor.execute(sql, (id,))
     db.commit()
-    print("All records have been deleted!")
+    print("\nAll records have been deleted!")
 
 
 

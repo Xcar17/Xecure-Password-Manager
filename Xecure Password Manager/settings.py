@@ -9,7 +9,7 @@
 from clear import clear
 from msvcrt import getch
 from dbsetup import delete_record, delete_all_records, fetch_rec_by_id_gen
-from passwordRecovery import update_master_password, changeMasterEmail
+from passwordRecovery import update_master_password, changeMasterEmail, retrieveIDByEmail
 
 #This function is the settings menu that contains the controls of delete a record, delete all records, change email,
 #change password, change security question (Tentative Feature), and Back to dashboard.
@@ -40,7 +40,7 @@ def settings(currentUser, userId):
                 changeEmail(userId)
 
             if menuSelection == 4:
-                update_master_password()
+                update_master_password(userId)
 
             # if menuSelection == 5:
             #     print("\nThis will call function lets user change Security Questions (FEATURE TENTATIVE)")
@@ -80,11 +80,13 @@ def deleteRecord(userId):
                 print("\nRecord name cannot be empty.\nPress any key to continue...")
                 getch()
                 clear()
+                break
 
             elif recordSelected.isnumeric():
                 print("\nRecord name cannot be composed of only numbers.\nPress any key to continue...")
                 getch()
                 clear()
+                break
 
 
             #todo implement function to find a specific record
@@ -125,9 +127,10 @@ def deleteRecord(userId):
                     print("\nRecord not found!\nPress any key to continue...")
                     getch()
                     clear()
+                    break
 
             if ready == 2:#Function ready to break
-                print("\nPress any key to go back to Settings...")
+                print("Press any key to go back to Settings...")
                 getch()
                 clear()
                 break
@@ -153,20 +156,9 @@ def deleteAllRecords(userId):
 
         if confirmation == "1":
             #todo implement function that validates user password
-            print("***Function will be called that ask user for password and if it matches records will be deleted.***")
-            #password = input("\nPlease enter master account password: ")
-            #todo implement input val
-
-            #if password == "found":#if password correct delete all records
             delete_all_records(userId)
             break
-                #print("All records were deleted!************PASSWORD MATCHING FEATURE NEEDS TO BE IMPLEMENTED. ONLY WORK WITH 'found' PASSWORD")
-                # todo implement record deletion
 
-            #else:#invalid rinput
-                #print("\nIncorrect Password.\nPress any key to go back...")
-                #getch()
-                #clear()
 
         elif confirmation == "2":#If no then records will not be deleted
             print("\nNo record will be deleted.")
@@ -176,8 +168,9 @@ def deleteAllRecords(userId):
             print("\nInvalid Input!\nPress any key to try again...")
             getch()
             clear()
+            break
 
-    print("\nPress any key to go back...")
+    print("Press any key to go back...")
     getch()
     clear()
 
@@ -185,16 +178,23 @@ def deleteAllRecords(userId):
 #Function allows user to change their email after confirming their password
 def changeEmail(userId):
     clear()
-    ready = 0#flag used to exit loop
     while True:
         try:
 
-            exit = changeMasterEmail(userId)
-            if exit == False:
+
+
+            usrEmail = changeMasterEmail(userId)
+            if usrEmail == False:
+                print("Press any key to go back...")
+                getch()
+                clear()
                 break
 
             else:
-                print("Something went wrong...****create a confirm/exit function*****")
+                print("Press any key to go back...")
+                getch()
+                clear()
+                break
 
         except Exception:
             print("\nInvalid Input. Error 6010")
@@ -204,16 +204,16 @@ def changeEmail(userId):
 
 
 #Function used to change the user's master account password
-def changePassword():
-    clear()
-    while True:
-        try:
-
-            update_master_password()
-
-
-        except Exception:
-            print("\nInvalid Input.")
-            print("Press any key to try again...")
-            getch()
-            clear()
+# def changePassword():
+#     clear()
+#     while True:
+#         try:
+#
+#             update_master_password(id)
+#
+#
+#         except Exception:
+#             print("\nInvalid Input.")
+#             print("Press any key to try again...")
+#             getch()
+#             clear()

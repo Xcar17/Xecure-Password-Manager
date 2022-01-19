@@ -16,7 +16,7 @@ from dashboard import dashBoard
 from dbsetup import add_log
 from dbsetup import next_user_id
 from dbsetup import encryptAll, add_log3, adding_new_enc_sec_answers
-from passwordRecovery import usernameRecovery, idRecovery, update_master_password, verifyIDByName, verifyIDByEmail
+from passwordRecovery import usernameRecovery, idRecovery, forgot_update_password, retrieveIDByName, retrieveIDByEmail
 
 
 #Function replaces input text as * in the cmd as the user enters their password. This is used so that the password is
@@ -199,11 +199,10 @@ def login():
                     if passInput == myCmpr:
                         currentUser = username
                         usrId = input("Please enter your userId: ")
-                        lastCMPR = verifyIDByName(username)
+                        lastCMPR = retrieveIDByName(username)
 
                         if usrId == str(lastCMPR):
                             clear()
-                            print("Successfully logged in as " + currentUser + "!\n")
                             usrLoggedIn = ("title Xecure Password Manager (logged in as " + currentUser + ")")
                             os.system(usrLoggedIn)
                             break
@@ -237,7 +236,7 @@ def login():
                 #This code will run if the user is fully authenticated
                 clear()
                 print("--------------Logged In-----------------")
-                print("\nThank you for logging in " + username + "\n\nPress any key to go to the Dashboard...")
+                print("\nThank you for logging in " + username + "\nPress any key to go to the Dashboard...")
                 getch()
                 dashBoard(currentUser, usrId)
                 break
@@ -404,7 +403,7 @@ def forgotLogin():
             if menuSelection == 2:
                 idRecovery()
             if menuSelection == 3:
-                update_master_password()
+                forgot_update_password()
             if menuSelection == 4:
                 break
             if menuSelection > 4 or menuSelection < 1:  # numbers higher or lower than valid cases

@@ -116,11 +116,13 @@ def getRecord(userId):
                 print("Press any key to try again...")
                 getch()
                 clear()
+                break
             elif recordName.isnumeric():
                 print("\nRecord name cannot be composed of only numbers.")
                 print("Press any key to try again...")
                 getch()
                 clear()
+                break
             else:
                 print("Program will search for record.\n")
 
@@ -277,8 +279,7 @@ def updateRecord(userId):
 
             while True:  # todo implement input validation
                 try:
-                    print(
-                        "--------------Update Record------------------")  # User needs to name the record they wish to update
+                    print("--------------Update Record------------------")  # User needs to name the record they wish to update
                     print("\nEnter the name of the record you want to update.")
                     oldRecordName = input("\nRecord name: ")  # todo implement input validation
 

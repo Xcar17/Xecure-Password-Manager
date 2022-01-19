@@ -66,7 +66,7 @@ def updateAcctPass(acctDataFile, origEmail, newData, forPass=True):
             modify = 0
     adf_w.close()
 
-def update_master_password():
+def forgot_update_password():
     while True:
         try:
             clear()
@@ -83,15 +83,13 @@ def update_master_password():
                 print("--------------Reset Password------------------")
                 print("\nPlease enter the code that was just sent to the email:")
                 answer = input("Code: ")
-
                 if code == answer:
-
                     hashEmail = hashlib.pbkdf2_hmac('sha256', email.encode("utf-8"), b'&%$#f^',182)# todo implement random salt test
                     newEmail = hashEmail.hex()
 
                     clear()
                     print("--------------Reset Password------------------")
-                    print("\n**Email verified** \n\nPlease enter a new password:")
+                    print("\nEmail verified! Please enter a new password:")
                     inputPass = input("New Password: ")
                     newPassword = hashlib.pbkdf2_hmac('sha256', inputPass.encode("utf-8"), b'*@#d2',182).hex()
 
@@ -116,36 +114,134 @@ def update_master_password():
             getch()
             clear()
 
-def changeMasterEmail(id=None): #':+()6\\zx!illp}}(N~'
-    email = input("Please enter the email associated with your account:")
+def update_master_password(id):
+    while True:
+        try:
+            clear()
+            print("--------------Reset Password------------------")
+            print("\n**Verification is needed in order to reset your password**")
+            print("\nPlease enter the email associated with your account:")
+            email = input("Email: ")
+
+            if verifyEmail(email):
+                idOfEnteredEmail = retrieveIDByEmail(email)
+                if id == str(idOfEnteredEmail):
+                    #generates a verification code and emails it to user
+                    code = generate_password()
+                    sendEmail(email, code)
+                    clear()
+                    print("--------------Reset Password------------------")
+                    print("\nPlease enter the code that was just sent to the email:")
+                    answer = input("Code: ")
+                    if code == answer:
+                        hashEmail = hashlib.pbkdf2_hmac('sha256', email.encode("utf-8"), b'&%$#f^',182)# todo implement random salt test
+                        newEmail = hashEmail.hex()
+
+                        clear()
+                        print("--------------Reset Password------------------")
+                        print("\nEmail verified! Please enter a new password:")
+                        inputPass = input("New Password: ")
+                        newPassword = hashlib.pbkdf2_hmac('sha256', inputPass.encode("utf-8"), b'*@#d2',182).hex()
+
+                        #updates password in accdatabase db document
+                        updateAcctPass('accdatabase', newEmail, newPassword)
+                        print("\nPassword has been updated!")
+
+                    else:
+                        print('\nThe code entered does not match.')
+
+                else:
+                    print(f"\nThe {email} is not valid.")
+
+            else:
+                print(f"\nThe {email} is not valid.")
+
+            print("Press any key to go back...")
+            getch()
+            clear()
+            break
+
+        except Exception:
+            print("\nInvalid Input.")
+            print("Press any key to try again...")
+            getch()
+            clear()
+
+
+
+#
+# def changeMasterEmail(id):
+#     print("--------------Change Account Email------------------")
+#     email = input("\nPlease enter the email associated with your account: ")
+#     if verifyEmail(email):
+#         idOfEnteredEmail = retrieveIDByEmail(email)
+#         if id == str (idOfEnteredEmail):
+#             #generate the code and email it to user
+#             code = generate_password()
+#             sendEmail(email, code)
+#             print("Please enter the code that was just sent to the email: " + email)
+#             answer = input("Code :")
+#             if code == answer:
+#                     hashEmail = hashlib.pbkdf2_hmac('sha256', email.encode("utf-8"), b'&%$#f^',182).hex()  # todo implement random salt test
+#                     clear()
+#                     print("--------------Change Account Email------------------")
+#
+#                     print("\nCode verified. Please enter your new email: ")
+#                     inputEmail = input("New Email: ")
+#                     newEmail = hashlib.pbkdf2_hmac('sha256', inputEmail.encode("utf-8"), b'&%$#f^',
+#                                                     182).hex()
+#                     #update password in acc databae
+#                     updateAcctPass('accdatabase', hashEmail, newEmail, False)
+#
+#                     print("\nEmail has been updated to " + inputEmail)
+#                     if id is not None:
+#                         update_master_email(inputEmail, id)
+#                         return False
+#             else:
+#                 print('\nCode does not match')
+#         else:
+#             print(f"\nThe {email} email is not valid.")
+#
+#     else:
+#         print(f"\nThe {email} email is not valid.")
+
+
+
+def changeMasterEmail(id):
+    print("--------------Change Account Email------------------")
+    print("\n**Verification is needed in order to change your email**")
+    email = input("\nPlease enter the email associated with your account: ")
     if verifyEmail(email):
-        #generate the code and email it to user
-        code = generate_password()
-        #code = '+()6\\zx!illp}}(N~' #test code to see if it breaks. found that : breaks emails
-        sendEmail(email, code)
-        answer = input("Please enter the code that was just sent to the email: " + email + "\n")
-        if code == answer:
-            print("Recovered!!  Here is where we would redirect to updating email ")
+        idOfEnteredEmail = retrieveIDByEmail(email)
+        if id == str (idOfEnteredEmail):
+            #generate the code and email it to user
+            code = generate_password()
+            sendEmail(email, code)
+            print("Please enter the code that was just sent to the email: " + email)
+            answer = input("Code :")
+            if code == answer:
+                    hashEmail = hashlib.pbkdf2_hmac('sha256', email.encode("utf-8"), b'&%$#f^',182).hex()  # todo implement random salt test
+                    clear()
+                    print("--------------Change Account Email------------------")
 
-            hashEmail = hashlib.pbkdf2_hmac('sha256', email.encode("utf-8"), b'&%$#f^',
-                                            182).hex()  # todo implement random salt test
-            #newEmail = hashEmail.hex()
+                    print("\nCode verified! Please enter your new email: ")
+                    inputEmail = input("New Email: ")
+                    newEmail = hashlib.pbkdf2_hmac('sha256', inputEmail.encode("utf-8"), b'&%$#f^',
+                                                    182).hex()
+                    #update password in acc databae
+                    updateAcctPass('accdatabase', hashEmail, newEmail, False)
 
-            inputEmail = input("Pleae enter new Email")
-            newEmail = hashlib.pbkdf2_hmac('sha256', inputEmail.encode("utf-8"), b'&%$#f^',
-                                            182).hex()
-            #update password in acc databae
-            updateAcctPass('accdatabase', hashEmail, newEmail, False)
-
-            print("Email has been updated to " + inputEmail)
-            if id is not None:
-                update_master_email(inputEmail, id)
-                return False
+                    print("\nEmail has been updated to " + inputEmail)
+                    if id is not None:
+                        update_master_email(inputEmail, id)
+                        return False
+            else:
+                print('\nCode does not match')
         else:
-            print('Code does not match')
+            print(f"\nThe {email} email is not valid.")
 
     else:
-        print(f"Email: {email} was not found.")
+        print(f"\nThe {email} email is not valid.")
 
 def retrieveUsername(email):
     # try:
@@ -169,7 +265,9 @@ def retrieveID(email):
             sendEmail(email, str(rec[0]), "ID")
     return False
 
-def verifyIDByName(usrName):
+def retrieveIDByName(usrName):
+
+
     # try:
     sql = ("select * from Registered_Users ")
     cursor.execute(sql )
@@ -180,14 +278,14 @@ def verifyIDByName(usrName):
             return rec[0]
     return False
 
-def verifyIDByEmail(usrName):
+def retrieveIDByEmail(email):
     # try:
     sql = ("select * from Registered_Users ")
     cursor.execute(sql )
     results = cursor.fetchall()
 
     for rec in results:
-        if decrypt(rec[0], rec[2]) == usrName:
+        if decrypt(rec[0], rec[2]) == email:
             return rec[0]
     return False
 
