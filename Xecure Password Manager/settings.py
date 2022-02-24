@@ -8,16 +8,16 @@
 
 from clear import clear
 from msvcrt import getch
-from dbsetup import delete_record, delete_all_records, fetch_rec_by_id_gen
-from passwordRecovery import update_master_password, changeMasterEmail, retrieveIDByEmail
+from dbsetup import delete_record, delete_all_records, fetch_rec_by_id_gen, checkIfNoRecords
+from passwordRecovery import update_master_password, changeMasterEmail
 
 #This function is the settings menu that contains the controls of delete a record, delete all records, change email,
 #change password, change security question (Tentative Feature), and Back to dashboard.
 #Gives users control over their data
-def settings(currentUser, userId):
-    clear()
+def settings(userId):
     while True:
         try:
+            clear()
             print("--------------Settings------------------")
             # Presents user's with all options available
             print("\nWhat would you like to do?.\n")
@@ -25,8 +25,7 @@ def settings(currentUser, userId):
             print("[2] Delete All Records")
             print("[3] Change Master Account Email")
             print("[4] Change Master Account Password")
-            #print("[5] Change Security Questions (FEATURE IS TENTATIVE)")
-            print("[5] Back to Dashboard\n")
+            print("[0] Back to Dashboard\n")
 
             menuSelection = int(input("Selection: "))
 
@@ -40,21 +39,17 @@ def settings(currentUser, userId):
                 changeEmail(userId)
 
             if menuSelection == 4:
-                update_master_password(userId)
+                result = update_master_password(userId)
+                if result == True:
+                    break
 
-            # if menuSelection == 5:
-            #     print("\nThis will call function lets user change Security Questions (FEATURE TENTATIVE)")
-            #     print("Press any key to continue...")
-            #     getch()
-            #     clear()
-
-            if menuSelection == 5:
+            if menuSelection == 0:
                 clear()
                 break
 
-            if menuSelection > 6 or menuSelection < 1:
-                print("\nPlease enter a number between 1 and 6.")
-                print("\nPress any key to try again...")
+            if menuSelection > 4 or menuSelection < 0:
+                print("\nPlease enter a number between 0 and 4.")
+                print("Press any key to try again...")
                 getch()
                 clear()
 
@@ -71,63 +66,77 @@ def deleteRecord(userId):
     ready = 1 #flag used to exit loop
     while True:
         try:
-            print("--------------Delete Record------------------")
-            #todo implement better input val
-            print("\nPlease enter the name of the record you wish to delete.")
-            recordSelected = input("\nRecord Name: ")
+            clear()
+            print("--------------Delete Record------------------\n[Enter '0' if you wish to go back to the previous screen]")
 
-            if recordSelected.isspace() or recordSelected == "":
-                print("\nRecord name cannot be empty.\nPress any key to continue...")
+            if checkIfNoRecords(userId) == 0:
+                print("\n**No records in database**")
+                print("Press any key to go back...")
                 getch()
                 clear()
                 break
 
-            elif recordSelected.isnumeric():
-                print("\nRecord name cannot be composed of only numbers.\nPress any key to continue...")
-                getch()
-                clear()
-                break
-
-
-            #todo implement function to find a specific record
             else:
-                test = fetch_rec_by_id_gen(userId, recordSelected, "Record_Name")
-                if recordSelected == test[2]:
-                    print("\nRecord found!\nPress any key to continue...")
-                    getch()
-                    clear()
 
-                    confirmation = "0"#Ensures user wants to delete this record
-                    #todo implement better input val
-                    while confirmation != "1" or confirmation != "2" or confirmation == "0":
-                        print("--------------Delete Record------------------")
-                        print("\nAre you sure you want to delete the " + recordSelected + " record?")
-                        print("[1] Yes")
-                        print("[2] No")
-                        confirmation = input("\nSelection: ")
+                #todo implement better input val
+                print("\nPlease enter the name of the record you wish to delete:")
+                recordSelected = input("\nRecord Name: ")
 
-                        if confirmation == "1":#If 1 user wants record deleted
-                            ready = 2#Flag is set to exit function
-                            delete_record(recordSelected, userId)
-                            print("\nRecord " + recordSelected + " was deleted!")
-                            #todo implement record deletion
-                            break
+                if recordSelected == '0':
+                    return '0'
 
-                        elif confirmation == "2":#Record will not be deleted if 2
-                            ready = 2#Flag set to exit function
-                            print("\nRecord was not deleted.")
-                            break
-
-                        else:#Invalid input
-                            print("\nInvalid Input!\nPress any key to try again...")
-                            getch()
-                            clear()
-
-                else:#If record not fund
-                    print("\nRecord not found!\nPress any key to continue...")
+                if recordSelected.isspace() or recordSelected == "":
+                    print("\nRecord name cannot be empty.\nPress any key to continue...")
                     getch()
                     clear()
                     break
+
+                elif recordSelected.isnumeric():
+                    print("\nRecord name cannot be composed of only numbers.\nPress any key to continue...")
+                    getch()
+                    clear()
+                    break
+
+
+                #todo implement function to find a specific record
+                else:
+                    test = fetch_rec_by_id_gen(userId, recordSelected, "Record_Name")
+                    if recordSelected == test[2]:
+                        print("\nRecord found!\nPress any key to continue...")
+                        getch()
+                        clear()
+
+                        confirmation = "0"#Ensures user wants to delete this record
+                        #todo implement better input val
+                        while confirmation != "1" or confirmation != "2" or confirmation == "0":
+                            print("--------------Delete Record------------------")
+                            print("\nAre you sure you want to delete the " + recordSelected + " record?")
+                            print("[1] Yes")
+                            print("[2] No, cancel and go back to Settings")
+                            confirmation = input("\nSelection: ")
+
+                            if confirmation == "1":#If 1 user wants record deleted
+                                ready = 2#Flag is set to exit function
+                                delete_record(recordSelected, userId)
+                                print("\nRecord " + recordSelected + " was deleted!")
+                                #todo implement record deletion
+                                break
+
+                            elif confirmation == "2":#Record will not be deleted if 2
+                                ready = 2#Flag set to exit function
+                                print("\nRecord was not deleted.")
+                                break
+
+                            else:#Invalid input
+                                print("\nInvalid Input!\nPress any key to try again...")
+                                getch()
+                                clear()
+
+                    else:#If record not fund
+                        print("\nRecord not found!\nPress any key to continue...")
+                        getch()
+                        clear()
+                        break
 
             if ready == 2:#Function ready to break
                 print("Press any key to go back to Settings...")
@@ -148,27 +157,38 @@ def deleteAllRecords(userId):
     confirmation = "0"
     #todo implement input val
     while confirmation != "1" or confirmation != "2" or confirmation == "0":#Asks user to confirm action of delete all
+
         print("--------------Delete Record------------------")
-        print("\nAre you sure you want to delete all the records? (This action cannot be undone)")
-        print("[1] Yes (Deletes All Records)")
-        print("[2] No (Does Not Delete Records)")
-        confirmation = input("\nSelection: ")
 
-        if confirmation == "1":
-            #todo implement function that validates user password
-            delete_all_records(userId)
+        if checkIfNoRecords(userId) == 0:
+            print("\n**No records in database**")
             break
 
+        else:
 
-        elif confirmation == "2":#If no then records will not be deleted
-            print("\nNo record will be deleted.")
-            break
+            print("\nAre you sure you want to delete all the records? (This action cannot be undone)\n")
+            print("[1] Yes")
+            print("[2] No, cancel and go back to Settings")
+            confirmation = input("\nSelection: ")
 
-        else:#if invalid input
-            print("\nInvalid Input!\nPress any key to try again...")
-            getch()
-            clear()
-            break
+            if confirmation == "":
+                print("\nSelection cannot be blank.")
+                break
+
+
+            if confirmation == "1":
+                delete_all_records(userId)
+                break
+
+
+
+            elif confirmation == "2":#If no then records will not be deleted
+                print("\nNo records erased")
+                break
+
+            else:#if invalid input
+                print("\nInvalid Input!")
+                break
 
     print("Press any key to go back...")
     getch()
@@ -184,6 +204,12 @@ def changeEmail(userId):
 
 
             usrEmail = changeMasterEmail(userId)
+
+            if usrEmail == '0':
+                break
+
+
+
             if usrEmail == False:
                 print("Press any key to go back...")
                 getch()

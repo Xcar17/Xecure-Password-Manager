@@ -14,10 +14,9 @@ from msvcrt import getch
 from clear import myExit, clear
 from dashboard import dashBoard
 from dbsetup import add_log
-from dbsetup import next_user_id
-from dbsetup import encryptAll, add_log3, adding_new_enc_sec_answers
+from dbsetup import encryptAll, add_log3, adding_new_enc_sec_answers, checkDuplicateEmail
 from passwordRecovery import usernameRecovery, idRecovery, forgot_update_password, retrieveIDByName, retrieveIDByEmail
-
+from hashing import combHash
 
 #Function replaces input text as * in the cmd as the user enters their password. This is used so that the password is
 #not displayed to the screen for others to see.
@@ -34,7 +33,6 @@ def hidePassword(prompt='\nPlease enter your password: '): #todo Pwd needs valid
             if myKey == 13:
                 sys.stdout.write('\n')
                 return usrPsswd
-                break#Needed?
 
             if myKey == 8:
                 if len(usrPsswd) > 0:
@@ -123,7 +121,7 @@ def login():
     while True:
         try:
             clear()
-            print("--------------Login Screen------------------")
+            print("--------------Login Screen------------------\n[Enter '0' if you wish to go back to the previous screen]")
             #If the database is empty, no user can log into the application, so an error is displayed to let users know
             if os.path.getsize("accdatabase") == 0:#If accdatabase file is empty, clear screen and print message
                 clear()
@@ -147,6 +145,9 @@ def login():
                     #username var will contain the user's entered password
                     username = input("\nPlease enter your username: ")
 
+                    if username == '0':
+                        return '0'
+
                     #A hash object is created and the username is encoded using utf8
                     #A salt of (*!@#s', 823) is stored as byte and it is used to salt the hash
                     h = hashlib.pbkdf2_hmac('sha256', username.encode("utf-8"), b'(*!@#s', 823)#todo random salt test
@@ -155,35 +156,14 @@ def login():
                     #It is needed in the login function to compare what the user entered with what is stored in the db
                     #If there is an entry in the db that matches the userInput, then the user is allowed to continue
                     userInput = h.hex()
-                    if checkLogin('accdatabase', userInput):
-                        clear()
-                        print("--------------Login Screen------------------")
-                        print("\nWelcome " + username + "!")
-                        break #If checklogin is true then the user will be asked to enter his/her password
 
-                    #If the user input does not match anything in the database then an error will be displayed and the
-                    #errorCount var will count the number of failed login attemptempts
-                    else:
-                        #Used to count failed login attempts
-                        errorCount -= 1
 
-                        if username == "":
-                            print("\nA username must be entered.")
-                        else:
-                            print("\nInvalid username.")
-
-                        #After 4 failed login attempts the user will be warned that the program will close after another
-                        if errorCount == 1:
-                            print("\nThe application will close after another failed login attempt")
-                        if errorCount == 0:
-                            exit(0)
-
-                #If username verified and valid the user can entere psswd
-                #The user will be asked to enter their password and their input will be verified with the db
-                while True:
 
                     #mpass function is called and it saves the password inside the userPassword variable
                     userPassword = hidePassword()
+
+                    if userPassword == '0':
+                        return '0'
 
                     #A hash object h is created and it is used to encoded, and hash the password to be validated
                     h = hashlib.pbkdf2_hmac('sha256', userPassword.encode("utf-8"), b'*@#d2', 182)#todo random salt test
@@ -193,62 +173,74 @@ def login():
                     #password in the database.
                     passInput = h.hex()
 
-                    getPsswd()#Opens file to read entries and compare passwords later on
-                    myPtct = pwdToCheck.replace("Password: ", '')
-                    myCmpr = myPtct.rstrip("\n")
-                    if passInput == myCmpr:
-                        currentUser = username
-                        usrId = input("Please enter your userId: ")
-                        lastCMPR = retrieveIDByName(username)
 
-                        if usrId == str(lastCMPR):
+
+                    if checkLogin('accdatabase', userInput):
+                        getPsswd()  # Opens file to read entries and compare passwords later on
+                        myPtct = pwdToCheck.replace("Password: ", '')
+                        myCmpr = myPtct.rstrip("\n")
+                        if passInput == myCmpr:
+                            currentUser = username
+                            usrId = combHash(username, userPassword)
+                            # lastCMPR = retrieveIDByName(username)
                             clear()
                             usrLoggedIn = ("title Xecure Password Manager (logged in as " + currentUser + ")")
                             os.system(usrLoggedIn)
                             break
 
                         else:
-                            errorCount -= 1  # failed login counter
-                            if userPassword == "":
-                                print("\nA password is required.")
-                            else:
-                                print("\nInvalid login.")
+                            print("\nInvalid Login")
+                            print("Press any key to try again...")
+                            getch()
+                            clear()
+                            print("--------------Login Screen------------------\n[Enter '0' if you wish to go back to the previous screen]")
 
-                            if errorCount == 1:
-                                print("The application will close after another failed login attempt")
-                            if errorCount == 0:  # application exits
-                                # todo implement lockout feature
-                                exit(0)
 
+
+
+                    #If the user input does not match anything in the database then an error will be displayed and the
+                    #errorCount var will count the number of failed login attemptempts
                     else:
-                        errorCount -= 1#failed login counter
-                        if userPassword == "":
-                            print("\nA password is required.")
-                        else:
-                            print("\nInvalid Password.")
+                        #Used to count failed login attempts
+                        errorCount -= 1
 
+                        if username == "":
+                            print("\nA username and password must be entered.\nPress any key to try again...")
+                            getch()
+                            clear()
+                            print("--------------Login Screen------------------\n[Enter '0' if you wish to go back to the previous screen]")
+                        else:
+                            print("\nInvalid Login")
+                            print("Press any key to try again...")
+                            getch()
+                            clear()
+                            print("--------------Login Screen------------------\n[Enter '0' if you wish to go back to the previous screen]")
+
+                        #After 4 failed login attempts the user will be warned that the program will close after another
                         if errorCount == 1:
-                            print("The application will close after another failed login attempt")
-                        if errorCount == 0:#application exits
-                            #todo implement lockout feature
+                            print("\nThe application will close after another failed login attempt")
+                        if errorCount == 0:
                             exit(0)
+
+
+
+
+
 
                 #This code will run if the user is fully authenticated
                 clear()
                 print("--------------Logged In-----------------")
                 print("\nThank you for logging in " + username + "\nPress any key to go to the Dashboard...")
                 getch()
-                dashBoard(currentUser, usrId)
+                dashBoard(currentUser)
                 break
 
-        except Exception as e:
-            exc_type, exc_obj, exc_tb = sys.exc_info()
-            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-            print(exc_type, fname, exc_tb.tb_lineno)
-            print("\nInvalid Input. TEst")
+        except Exception:
+            print("\nInvalid Input")
             print("Press any key to try again...")
             getch()
             clear()
+
 
 
 
@@ -260,12 +252,35 @@ def login():
 def getEmail(): #todo Needs validation to make sure no repeat emails accepted
     while True:
         try:
+            clear()
+            print("--------------Register------------------\n[Enter '0' if you wish to go back to the previous screen]")
             #todo implement input validation
             useremail = input("\nPlease enter the email for your account: ")
+
+            if useremail == '0':
+                return '0'
+
+            while checkDuplicateEmail(useremail):
+                useremail = input("\nEmail Taken. Please enter another email for your account: ")
+
+
             if useremail.isspace() or useremail == "":
-                print("\nEmail cannot be empty.")
+                print("\nEmail cannot be empty\nPress any key to try again...")
+                getch()
+                clear()
+                continue
+
+            elif len(useremail) < 5:
+                print("\nEmail cannot be less than 5 characters\nPress any key to try again...")
+                getch()
+                clear()
+                continue
+
             elif useremail.isnumeric():
-                print("\nEmail cannot be composed of only numbers.")
+                print("\nEmail cannot be composed of only numbers.\nPress any key to try again...")
+                getch()
+                clear()
+                continue
             else:
                 break
 
@@ -287,32 +302,45 @@ def register():
      while True:
          try:
                 while True:
-                    print("--------------Register Screen------------------")
                     if escape == 1:#Makes sure email only gets called once
                         usrEmail = getEmail()
+
+                        if usrEmail == '0':
+                            return '0'
+
                         escape += 1
                         hashEmail = hashlib.pbkdf2_hmac('sha256', usrEmail.encode("utf-8"), b'&%$#f^',
                                                         182)  # todo implement random salt test
                         newEmail = hashEmail.hex()
 
                     username = ""
-                    while username.isspace() or len(username) < 5 or username.isnumeric():
-
+                    while True:
+                        clear()
+                        print("--------------Register------------------\n[Enter '0' if you wish to go back to the previous screen]")
                         #The user is asked to enter his Master Username
                         username = input("\nPlease enter a username for your account: ")
+
+                        if username == '0':
+                            return '0'
 
                         # todo implement usrnme validation func or find way to remove/prevent spaces from being entered
                         # todo fond how to make the username not take in a password that is all numbers and spaces
                         # todo better user input validation can be implemented
 
                         if username.isspace() or username == "":
-                            print("\nUsername cannot be empty.")
+                            print("\nUsername cannot be empty.\nPress any key to try again...")
+                            getch()
 
                         elif len(username) < 5:
-                            print("\nUsername must be at least 8 characters long.")
+                            print("\nUsername must be at least 8 characters long.\nPress any key to try again...")
+                            getch()
 
                         elif username.isnumeric():
-                            print("\nUsername cannot be composed of only numbers.")
+                            print("\nUsername cannot be composed of only numbers.\nPress any key to try again...")
+                            getch()
+
+                        else:
+                            break
 
 
                     #The entered username is encoded, salted and hashed inside the h hash object
@@ -327,7 +355,7 @@ def register():
                     #If it check() returns true it means that username is already taken. An error message will be displayed
                     if checkStringDatabase('accdatabase', newUser):
                         print("\nUser already exists! Please choose another username.")
-                        print("\nPress any key to try again...")
+                        print("Press any key to try again...")
                         getch()
                         clear()
                         #If the user already exists the user will be forced to enter a new name
@@ -337,10 +365,32 @@ def register():
                         #If the username is not already taken the program will continue and the user can enter their psswd
 
                 #The mpass() is called and it will ask the user for the password
-                b = hidePassword()              #todo need to implement a way to exit this if the user wants to back out
+                while True:
+                        clear()
+                        print("--------------Register------------------\n[Enter '0' if you wish to go back to the previous screen]")
+                        secretPass = hidePassword()              #todo needs input verification and password protocols
+
+                        if secretPass == '0':
+                            return '0'
+
+                        if secretPass == "":
+                            print("\nPassword cannot be empty\nPress any key to try again...")
+                            getch()
+                            continue
+
+
+                        if len(secretPass) < 5:
+                            print("\nPassword cannot be less than 5 characters\nPress any key to try again...")
+                            getch()
+                            continue
+
+                        else:
+                          break
+
+
 
                 # The entered password is encoded, salted and hashed inside the h hash object
-                h = hashlib.pbkdf2_hmac('sha256', b.encode("utf-8"), b'*@#d2', 182)#todo implement random salt test
+                h = hashlib.pbkdf2_hmac('sha256', secretPass.encode("utf-8"), b'*@#d2', 182)#todo implement random salt test
 
                 # A newpass variable holds the hex value of the hashed password
                 newPass = h.hex()
@@ -357,21 +407,19 @@ def register():
 
 
                 #  get  next user id
-                nxtID = next_user_id()
+                usrID = combHash(username, secretPass)
 
                 topUser = username
                 # use newID to encrypt username and usrEmail
-                username, usrEmail = encryptAll(nxtID, [username, usrEmail])
+                username, usrEmail = encryptAll(usrID, [username, usrEmail])
 
 
-                add_log(username, usrEmail)#todo make sure username and usrEmail are sanitized
+                add_log(usrID, username, usrEmail)#todo make sure username and usrEmail are sanitized
 
                 #User is registered and confirmation message printed to screen
-                print("--------------UserID------------------")
-                print("\nYour userID is:")
-                print("\t" + str(nxtID))
-                print("\nPlease make sure to remember this userID as it will be used to log in.")
-                print("\nPress any key to go back to login menu...")
+                print("--------------Register------------------")
+                print("\nThank you for registering")
+                print("Press any key to go back to the main menu...")
                 getch()
                 clear()
                 break
@@ -380,7 +428,7 @@ def register():
              exc_type, exc_obj, exc_tb = sys.exc_info()
              fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
              print(exc_type, fname, exc_tb.tb_lineno)
-             print("\nInvalid Input. 342")
+             print("\nInvalid Input")
              print("Press any key to try again...")
              getch()
              clear()
@@ -393,59 +441,24 @@ def forgotLogin():
             print("--------------Login Help------------------")
             print("\nPlease select between the following options:\n")  # Presents user's with all options available
             print("[1] Forgot Username")
-            print("[2] Forgot UserID")
-            print("[3] Forgot Password")
-            print("[4] Back to login screen\n")
+            print("[2] Forgot Password")
+            print("[0] Back to login screen\n")
             menuSelection = int(input("Selection: "))
 
             if menuSelection == 1:
                 usernameRecovery()
             if menuSelection == 2:
-                idRecovery()
-            if menuSelection == 3:
                 forgot_update_password()
-            if menuSelection == 4:
+            if menuSelection == 0:
                 break
-            if menuSelection > 4 or menuSelection < 1:  # numbers higher or lower than valid cases
-                print("\nPlease enter a number between 1 and 4.")
+            if menuSelection > 2 or menuSelection < 0:  # numbers higher or lower than valid cases
+                print("\nPlease enter a number between 0 and 2.")
                 print("Press any key to try again...")
                 getch()
                 clear()
 
         except Exception:
             print("\nInvalid Input.")
-            print("Press any key to try again...")
-            getch()
-            clear()
-
-
-
-
-############################################NOT IMPLEMENTED & TENTATIVE#################################################
-#This function will be called in register and it will save these to DB
-def accountRecovery():
-    clear()
-    while True:
-        try:
-            print("--------------Security Questions------------------")  # Presents user's with all options available
-            print("Please answer these questions truthfully. They will be used to recover your account if you ever"
-                  "need to reset your password.\n")  # Presents user's with all options available
-
-            #todo all input needs validation and loop back to prevent invalid data
-            carColor = input("What was the color of your first car? ")
-            elementarySchool = input("What was the name of your elementary school? ")
-            firstPet = input("What was the name of your first pet? ")
-            nearestSibling = input("In what city does your nearest sibling live? ")
-            childhoodFriend = input("What is the name of your favorite childhood friend? ")
-            adding_new_enc_sec_answers (8 ,carColor, elementarySchool, firstPet, nearestSibling, childhoodFriend)
-            print("Security Questions saved!")
-            break
-
-        except Exception as e:
-            exc_type, exc_obj, exc_tb = sys.exc_info()
-            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-            print(exc_type, fname, exc_tb.tb_lineno)
-            print("\nInvalid Input. 333333")
             print("Press any key to try again...")
             getch()
             clear()

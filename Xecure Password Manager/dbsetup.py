@@ -3,7 +3,7 @@ from mysql.connector import errorcode
 from cryptography.fernet import Fernet
 import mysql.connector
 
-DB_NAME = "XecuredDB"
+DB_NAME = "XecuredDBTest4"
 
 def use_database(DB_NAME):
     cursor.execute("USE {}".format(DB_NAME))
@@ -21,7 +21,7 @@ create_database()#creates a database with the name entered
 TABLES = {}
 
 TABLES['test'] = (
-    "CREATE TABLE IF NOT EXISTS Registered_Users (id int(11) NOT NULL AUTO_INCREMENT,"
+    "CREATE TABLE IF NOT EXISTS Registered_Users (id varchar(250),"
     " Account_Name varchar(250) NOT NULL, Email varchar(250) NOT NULL, PRIMARY KEY (id))"
 )
 
@@ -43,9 +43,9 @@ def create_tables():
 create_tables()
 
 
-def add_log(Account_Name, Email):
-    sql = ("INSERT INTO Registered_Users(Account_Name, Email) VALUES (%s, %s)")
-    cursor.execute(sql, (Account_Name, Email))
+def add_log(id, Account_Name, Email):
+    sql = ("INSERT INTO Registered_Users(id, Account_Name, Email) VALUES (%s, %s, %s)")
+    cursor.execute(sql, (id, Account_Name, Email))
     db.commit()
     log_id = cursor.lastrowid
     #print ("Added log {}".format(log_id))
@@ -54,7 +54,8 @@ def add_log(Account_Name, Email):
 def prompt_user():
     AccountName = input("What is the name of the account: ")
     usrEmail = input("What is the user email for this account : ")
-    add_log(AccountName, usrEmail)
+    id = input("What is the user email for this account : ")
+    add_log(id, AccountName, usrEmail)
 #prompt_user()
 
 
@@ -62,9 +63,9 @@ TABLES2 = {}
 
 TABLES2['test'] = (
     "CREATE TABLE IF NOT EXISTS User_Records ("
-    " recordId int(11) NOT NULL AUTO_INCREMENT, userId int, FOREIGN KEY(userId) REFERENCES Registered_Users(id),"
+    " recordId int(11) NOT NULL AUTO_INCREMENT, userId varchar(250), FOREIGN KEY(userId) REFERENCES Registered_Users(id) ON UPDATE CASCADE,"
     " Record_Name varchar(250) NOT NULL, Email varchar(250) NOT NULL, User_Name varchar(250), "
-    "Account_Password varchar(250) NOT NULL, PRIMARY KEY (recordId))"
+    "Account_Password varchar(250) NOT NULL, PRIMARY KEY (recordId), UNIQUE KEY `Unique Records` (`userId`,`Record_Name`))"
 )
 
 
@@ -112,7 +113,7 @@ TABLES3 = {}
 
 TABLES3['SecTab'] = (
     "CREATE TABLE IF NOT EXISTS Rec_Sec ("
-    " recordId int(11) NOT NULL AUTO_INCREMENT, userId int, FOREIGN KEY(userId) REFERENCES Registered_Users(id),"
+    " recordId int(11) NOT NULL AUTO_INCREMENT, userId varchar(250), FOREIGN KEY(userId) REFERENCES Registered_Users(id),"
     " Answer1 varchar(250) NOT NULL, Answer2 varchar(250) NOT NULL, Answer3 varchar(250) NOT NULL, "
     "Answer4 varchar(250) NOT NULL,  Answer5 varchar(250) NOT NULL,PRIMARY KEY (recordId))"
 )
@@ -157,6 +158,21 @@ def update_record_name(newRecord, id, rcName):
     db.commit()
     #except:
     #    print("THAT RECEORD DOESN'T EXIST!")
+    #print("Log updated!")
+
+def update_user_ID(newID, oldID):
+    alterOff = "SET FOREIGN_KEY_CHECKS = 0;"
+    cursor.execute(alterOff)
+
+    sql = ("UPDATE User_Records SET userId = %s WHERE userId = %s")
+    cursor.execute(sql, (newID, oldID))
+
+
+    sql = ("UPDATE Registered_Users SET id = %s WHERE id = %s")
+    cursor.execute(sql, (newID, oldID))
+    alterOn = "SET FOREIGN_KEY_CHECKS = 1;"
+    cursor.execute(alterOn)
+    db.commit()
     #print("Log updated!")
 
 
@@ -298,8 +314,7 @@ def encryptAll(id, list_2_enc):
 def printAllRecsByID(id, nameOnly = False):
     # todo implement code that displays "no records found for this account"
 
-    if type(id) != int:
-        id = int(id)
+
 
     sql = ("select * from User_Records ")
     cursor.execute(sql )
@@ -323,7 +338,7 @@ def printAllRecsByID(id, nameOnly = False):
 
 
 def adding_new_enc_record(userId, recordName, recordEmail, recordUser, recordpassword):
-    userId = int(userId)
+    userId = userId
     Record_Name = recordName
     Email = recordEmail
     User_Name = recordUser
@@ -332,7 +347,7 @@ def adding_new_enc_record(userId, recordName, recordEmail, recordUser, recordpas
     add_log2(userId, Record_Name, Email, User_Name, Account_Password)
 
 def adding_new_enc_sec_answers(userId, Answer1, Answer2, Answer3, Answer4, Answer5):
-    userId = int(userId)
+    userId = userId
     encAnswer1, encAnswer2, encAnswer3, encAnswer4, encAnswer5 = encryptAll(userId, [ Answer1, Answer2, Answer3, Answer4, Answer5])
     add_log3(userId, encAnswer1, encAnswer2, encAnswer3, encAnswer4, encAnswer5)
 
@@ -383,8 +398,36 @@ def next_user_id():
     sql = ("SELECT * FROM Registered_Users" )
     cursor.execute(sql)
     results = cursor.fetchall()
-    if len(results) == 0:
-        return 1
+    return len(results) + 1
 
-    lastRec = results[-1]
-    return lastRec[0] + 1
+
+def checkIfNoRecords(userId):
+    sql = ("SELECT * FROM User_Records where userId = %s ")
+    cursor.execute(sql, (userId,))
+    results = cursor.fetchall()
+    return len(results)
+
+
+def checkDuplicateRecName(usr_id, newName):
+    # try:
+    sql = ("select * from User_Records where userId = %s")
+    cursor.execute(sql, (usr_id,) )
+    results = cursor.fetchall()
+
+    curNames = [decrypt(usr_id, rec[2]) for rec in results]
+
+    return newName in curNames
+
+
+def checkDuplicateEmail(newEmail):
+    # try:
+    sql = ("select * from Registered_Users")
+    cursor.execute(sql )
+    results = cursor.fetchall()
+
+    curEmails = [decrypt(rec[0], rec[2]) for rec in results]
+
+    return newEmail in curEmails
+
+#print(next_user_id())
+

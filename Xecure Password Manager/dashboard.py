@@ -12,23 +12,30 @@ from clear import clear, myExit
 from settings import settings
 from msvcrt import getch
 import pyperclip
-import time
 from dbsetup import update_record_name, update_record_email, printAllRecsByID, \
-    update_record_username, update_record_password, adding_new_enc_record, fetch_rec_by_id_gen
+    update_record_username, update_record_password, adding_new_enc_record, fetch_rec_by_id_gen, checkIfNoRecords, checkDuplicateRecName
 from random_pwd_generator import generate_password
+from passwordRecovery import retrieveIDByName
+import threading
+import time
+
+#Function uses multithreading to flush the clipboard in the background while the user uses the application
+def flushPasswordThread():
+    time.sleep(15)
+    pyperclip.copy("")
 
 
 # Once the user logs into the application this function will be called. This is the primary menu
 # It contains controls for retrieving a record, adding a record, updating a record, viewing all records, user settings
 # The users can also logout and exit the application from this screen
-def dashBoard(currentUser, usrId):
-    clear()
+def dashBoard(currentUser):
     pyperclip.copy("")
     while True:
         try:
-
+            clear()
+            usrId = retrieveIDByName(currentUser)
             print("--------------Dash Board------------------")  # Presents user's with all options available
-            print("\nPlease select between the following options.\n")
+            print("\nPlease select between the following options:\n")
             print("[1] Retrieve a Record")
             print("[2] Add a New Record")
             print("[3] Update Record")
@@ -55,7 +62,7 @@ def dashBoard(currentUser, usrId):
                 recordNamesOnly(usrId, True)
 
             if menuSelection == 6:
-                settings(currentUser, usrId)
+                settings(usrId)
 
             if menuSelection == 7:
                 # This option will let the user sign out and go back to the login screen
@@ -93,10 +100,11 @@ def dashBoard(currentUser, usrId):
                 clear()
 
         except Exception as e:
-            exc_type, exc_obj, exc_tb = sys.exc_info()
-            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-            print(exc_type, fname, exc_tb.tb_lineno)
-            print("\nInvalid Input. 333333")
+            # exc_type, exc_obj, exc_tb = sys.exc_info()
+            # fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            # print(exc_type, fname, exc_tb.tb_lineno)
+
+            print("\nPlease enter a number between 1 and 8.")
             print("Press any key to try again...")
             getch()
             clear()
@@ -107,9 +115,12 @@ def getRecord(userId):
     clear()
     while True:
         try:
-            print("--------------Retrieve Record------------------")  # Asks user to name the record
+            print("--------------Retrieve Record------------------\n[Enter '0' if you wish to go back to the previous screen]")  # Asks user to name the record
             print("\nEnter the name of record you wish to retrieve. ")
             recordName = input("\nRecord name: ")
+
+            if recordName == '0':
+                return '0'
 
             if recordName.isspace() or recordName == "":
                 print("\nRecord name cannot be empty.")
@@ -138,11 +149,11 @@ def getRecord(userId):
                     print(recordName + " Account Username: " + test[4])
                     print(recordName + " Account Password: " + test[5])
 
-                    #todo fix copy timer, sleep is not a good fit
+
                     pyperclip.copy(test[5])
-                    print("\nYour password will be saved to your clipboard for only 5 seconds....(**MAYBE DO SOMETHING ELSE INSTEAD OF WAIT/SLEEP**)")
-                    time.sleep(5)
-                    pyperclip.copy("")
+                    print("\n**Your password will be saved to your clipboard for only 15 seconds**\n")
+                    flush = threading.Thread(target=flushPasswordThread, args=())
+                    flush.start()
                     print("Press any key to go back to Dashboard...")
                     getch()
                     clear()
@@ -167,9 +178,20 @@ def addRecord(userId):
     while True:
         try:
             while True:
-                print("--------------Add Record------------------")  # Asks for name of record to retrieve
+                print("--------------Add Record------------------\n[Enter '0' if you wish to go back to the dashboard]")  # Asks for name of record to retrieve
                 print("\nEnter the name of the record (You will use this name to retrieve the record).")
-                recordName = input("\nRecord name: ")  # todo implement input validation
+                recordName = input("\nRecord Name: ")  # todo implement input validation
+
+                if recordName == '0':
+                    return '0'
+
+                if checkDuplicateRecName(userId, recordName):
+                    print("\nRecord name taken, please choose another ")
+                    print("Press any key to try again...")
+                    getch()
+                    clear()
+                    continue
+
                 if recordName.isspace() or recordName == "":
                     print("\nRecord name cannot be empty.")
                     print("Press any key to try again...")
@@ -192,14 +214,20 @@ def addRecord(userId):
             # Asks user to enter an email for their record
             while True:  # todo implement input validation
                 print("\nEnter the Email for your " + recordName + " account.")
-                recordEmail = input("\nAcount Email: ")
+                recordEmail = input("Account Email: ")
+
+                if recordEmail == '0':
+                    return '0'
 
                 # todo implement input validation for email
                 break
 
             while True:  # todo implement input validation
                 print("\nEnter the Username for your " + recordName + " account.")
-                recordUser = input("\nAcount Username: ")
+                recordUser = input("Account Username: ")
+
+                if recordUser == '0':
+                    return '0'
 
                 # todo implement input validation for username
                 break
@@ -207,45 +235,86 @@ def addRecord(userId):
             while True:  # Allows users the option to enter a randomly generated password for their account password
                 end = False
                 clear()
-                print("\nWould you like to generate a random password for your " + recordName + " account?")
+                print("--------------Add Record------------------")
+                print("\nWould you like to generate a random password for your " + recordName + " account?\n")
                 print("[1] Yes")
-                print("[2] No")
-                menuSelection = int(input("\nSelection: "))
+                print("[2] No, I would like to create my own password")
+                print("[0] Cancel and go back to dashboard")
+                menuSelection = input("\nSelection: ")
+
+                if menuSelection == '0':
+                    return '0'
 
                 # todo implement input validation
                 # If 1 randomly generated password will be created
-                if menuSelection == 1:
+
+                if menuSelection != "1" and menuSelection != "2" and menuSelection != "":
+                    print("\nPlease select a number between 0 and 2.\nPress any key to try again...")
+                    getch()
+                    clear()
+
+                if menuSelection == "":
+                    print("\nSelection cannot be blank.\nPress any key to try again...")
+                    getch()
+                    clear()
+
+
+                if menuSelection == '1':
 
                     recordpassword = generate_password()  # todo place the function to generate a random password here
-                    print("\nThe random password generated was: " + recordpassword)
                     moveOn = False
                     while moveOn == False:
-                        print("\nWould you like to use this password?")
+                        clear()
+                        print("--------------Add Record------------------")
+                        print("\nThe random password generated was: " + recordpassword)
+                        print("\nWould you like to use this password?\n")
                         print("[1] Yes")
                         print("[2] No")
-                        passSelect = int(input("\nSelection: "))
-                        if passSelect == 1:
+                        print("[0] Cancel and go back to dashboard\n")
+                        passSelect = input("\nSelection: ")
+
+                        if passSelect == '0':
+                            return '0'
+
+                        if passSelect == '1':
                             moveOn = True
                             end = True
-                        elif passSelect == 2:
-                            menuSelection == 2
+                        elif passSelect == '2':
+                            menuSelection == '2'
                             moveOn = True
+
+                        elif passSelect == "":
+                            print("\nSelection cannot be blank.\nPress any key to try again...")
+                            getch()
+                            clear()
+                        elif passSelect != '1' or passSelect != '2':
+                            print("\nPlease select a number between 1 and 2.\nPress any key to try again...")
+                            getch()
+                            clear()
+
                         else:
-                            print("\nInvalid Input 10002")
+                            print("\nInvalid Input.\nPress any key to try again...")
+                            getch()
+                            clear()
 
 
                 # If 2 user can enter their own password
-                if menuSelection == 2:
+                if menuSelection == '2':
                     while True:
-                        print("\nEnter the password for your " + recordName + " account")
-                        recordpassword = input("\nAcount password (has to be fixed to only display ****): ")
+                        clear()
+                        print("--------------Add Record------------------\n[Enter '0' if you wish to go back to the dashboard]")
+                        print("\nEnter the password for your " + recordName + " account:\n")
+                        recordpassword = input("Acount Password: (has to be fixed to only display ****) ")
+
+                        if recordpassword == '0':
+                            return '0'
+
                         # todo implement input validation
                         if recordpassword.isspace() or recordpassword == "":
                             print("\nPassword cannot be empty.")
                             print("Press any key to try again...")
                             getch()
                             clear()
-                        # todo implement function to detect if this user already has an account with this name.
 
                         elif recordpassword.isnumeric():
                             print("\nPassword cannot be composed of only numbers.")
@@ -257,13 +326,15 @@ def addRecord(userId):
                             break
 
                 if end == True:    # todo encrypt the 5 variables and send them to add_log2() function below
-                    adding_new_enc_record(int(userId), recordName, recordEmail, recordUser, recordpassword)
+                    adding_new_enc_record(userId, recordName, recordEmail, recordUser, recordpassword)
                     print("\nRecord created!")
                     print("Press any key to go back to Dashboard...")
                     getch()
                     clear()
                     break
+
             break
+
         except Exception:
             print("\nSomething went wrong. Please try again.")
             print("Press any key to try again...")
@@ -279,99 +350,204 @@ def updateRecord(userId):
 
             while True:  # todo implement input validation
                 try:
-                    print("--------------Update Record------------------")  # User needs to name the record they wish to update
-                    print("\nEnter the name of the record you want to update.")
-                    oldRecordName = input("\nRecord name: ")  # todo implement input validation
 
-                    if oldRecordName.isspace() or oldRecordName == "":
-                        print("\nRecord name cannot be empty.")
-                        print("Press any key to try again...")
-                        getch()
-                        clear()
+                    while True:
+                        print("--------------Update Record------------------\n[Enter '0' if you wish to go back to the previous screen]")  # User needs to name the record they wish to update
+                        print("\nEnter the name of the record you want to update.")
+                        oldRecordName = input("\nRecord name: ")  # todo implement input validation
 
-                    elif oldRecordName.isnumeric():
-                        print("\nRecord name cannot be composed of only numbers.")
-                        print("Press any key to try again...")
-                        getch()
-                        clear()
+                        if oldRecordName == '0':
+                            return '0'
 
-                    print("--------------Update Record------------------")
-                    print("\nWhat would you like to newRecordName about the " + oldRecordName + " record?")
-                    print("[1] Change Record Name")
-                    print("[2] Change Record Email")
-                    print("[3] Change Record Username")
-                    print("[4] Change Record Password")
-                    print("[5] Back to Dashboard")
-                    menuSelection = int(input("\nSelection: "))
+                        test = fetch_rec_by_id_gen(userId, oldRecordName, "Record_Name")
 
-                    if menuSelection > 5 or menuSelection < 1 or menuSelection == "":
-                        print("\nPlease enter a number between 1 and 5.")
-                        print("\nPress any key to try again...")
-                        getch()
-                        clear()
+                        if oldRecordName.isspace() or oldRecordName == "":
+                            print("\nRecord name cannot be empty.")
+                            print("Press any key to try again...")
+                            getch()
+                            clear()
+                            continue
+
+                        if oldRecordName.isnumeric():
+                            print("\nRecord name cannot be composed of only numbers.")
+                            print("Press any key to try again...")
+                            getch()
+                            clear()
+                            continue
+
+                        if oldRecordName == test[2]:
+                            clear()
+                            break
+
+                        else:
+                            print("\nRecord not found...")
+                            print("Press any key to try again...")
+                            getch()
+                            clear()
+
+                    while True:
+                        try:
+                            clear()
+                            print("--------------Update Record------------------")
+                            print("\nWhat would you like to change about your record?\n")
+                            print("[1] Change Record Name")
+                            print("[2] Change Record Email")
+                            print("[3] Change Record Username")
+                            print("[4] Change Record Password")
+                            print("[0] Back to Dashboard")
+                            menuSelection = int(input("\nSelection: "))
 
 
-                    # todo implement all changes specified above in db
-                    # todo implement input validation for all of these
-                    elif menuSelection == 1:
-                        newRecordName = input("Enter the new record name: ")
-                        update_record_name(newRecordName, userId, oldRecordName)
-                        print("\nRecord name updated!\nPress any key to continue...")
-                        getch()
-                        clear()
+                            if menuSelection > 4 or menuSelection < 0 or menuSelection == "":
+                                print("\nPlease enter a number between 0 and 4")
+                                print("Press any key to try again...")
+                                getch()
+                                clear()
 
-                    elif menuSelection == 2:
-                        newEmail = input("Enter the new record email: ")
-                        update_record_email(newEmail, userId, oldRecordName)
-                        print("\nRecord email updated!\nPress any key to continue...")
-                        getch()
-                        clear()
 
-                    elif menuSelection == 3:
-                        newRecordName = input("Enter the new record username: ")
-                        update_record_username(newRecordName, userId, oldRecordName)
-                        print("\nRecord username updated!\nPress any key to continue...")
-                        getch()
-                        clear()
+                            # todo implement all changes specified above in db
+                            # todo implement input validation for all of these
+                            elif menuSelection == 1:
+                                while True:
+                                    clear()
+                                    print("--------------Update Record Name------------------\n[Enter '0' if you wish to go back to the previous screen]\n")
+                                    newRecordName = input("Enter the new record name: ")
 
-                    elif menuSelection == 4:
-                        newRecordName = input("Enter the new record password: ")
-                        update_record_password(newRecordName, userId, oldRecordName)
-                        print("\nRecord password updated!\nPress any key to continue...")
-                        getch()
-                        clear()
+                                    if newRecordName == '0':
+                                        break
 
-                    elif menuSelection == 5:
-                        # ready = 2#todo test if you need this
-                        clear()
-                        break
+                                    if checkDuplicateRecName(userId, newRecordName):
+                                        print("\nRecord name taken, please choose another ")
+                                        print("Press any key to try again...")
+                                        getch()
+                                        clear()
+                                        continue
 
-                    else:
-                        print("Invalid input!\n\nPress any key to try again...")
-                        clear()
-                        getch()
+                                    if newRecordName == "":
+                                        print("\nRecord Name cannot be blank")
+                                        print("Press any key to try again...")
+                                        getch()
+                                        clear()
+                                        continue
+
+                                    update_record_name(newRecordName, userId, oldRecordName)
+                                    oldRecordName = newRecordName
+                                    print("\nRecord name updated!\nPress any key to continue...")
+                                    getch()
+                                    clear()
+                                    break
+
+                            elif menuSelection == 2:
+                                while True:
+                                    clear()
+                                    print("--------------Update Record Email------------------\n[Enter '0' if you wish to go back to the previous screen]\n")
+                                    newEmail = input("Enter the new record email: ")
+
+                                    if newEmail == '0':
+                                        break
+
+                                    if newEmail == "":
+                                        print("\nRecord email cannot be blank")
+                                        print("Press any key to try again...")
+                                        getch()
+                                        clear()
+                                        continue
+
+                                    update_record_email(newEmail, userId, oldRecordName)
+                                    print("\nRecord email updated!\nPress any key to continue...")
+                                    getch()
+                                    clear()
+                                    break
+
+                            elif menuSelection == 3:
+                                while True:
+                                    clear()
+                                    print("--------------Update Record Username------------------\n[Enter '0' if you wish to go back to the previous screen]\n")
+                                    newRecordName = input("Enter the new record username: ")
+
+                                    if newRecordName == '0':
+                                        break
+
+                                    if newRecordName == "":
+                                        print("\nRecord username cannot be blank")
+                                        print("Press any key to try again...")
+                                        getch()
+                                        clear()
+                                        continue
+
+                                    update_record_username(newRecordName, userId, oldRecordName)
+                                    print("\nRecord username updated!\nPress any key to continue...")
+                                    getch()
+                                    clear()
+                                    break
+
+                            elif menuSelection == 4:
+                                while True:
+                                    clear()
+                                    print("--------------Update Record Password------------------\n[Enter '0' if you wish to go back to the previous screen]\n")
+                                    newRecordPassword = input("Enter the new record password: ")
+
+                                    if newRecordPassword == '0':
+                                        break
+
+                                    if newRecordPassword == "":
+                                        print("\nRecord username cannot be blank")
+                                        print("Press any key to try again...")
+                                        getch()
+                                        clear()
+                                        continue
+
+                                    update_record_password(newRecordPassword, userId, oldRecordName)
+                                    print("\nRecord password updated!\nPress any key to continue...")
+                                    getch()
+                                    clear()
+                                    break
+
+                            elif menuSelection == 0:
+                                clear()
+                                return '0'
+
+
+                            else:
+                                print("\nInvalid input!\nPress any key to try again...")
+                                clear()
+                                getch()
+
+
+
+                        except Exception:
+                            print("\nInvalid input. Please enter a number between 1 and 5\nPress any key to try again...")
+                            getch()
+                            clear()
+
+                    break
 
                 except Exception:
-                    print("\nInvalid Input. 10003")
+                    print("\nInvalid Input!")
                     print("Press any key to try again...")
                     getch()
                     clear()
-            break
-
+                break
         except Exception:
             print("\nInvalid Input. 10005")
             print("Press any key to try again...")
             getch()
             clear()
 
+        break
 
 def viewAll(userId):
     clear()
 
     print("--------------View All Record------------------\n")
 
-    printAllRecsByID(userId)
-    #todo implement code that displays "no records for this account"
+    if checkIfNoRecords(userId) == 0:
+        print("**No records in database**")
+
+
+    else:
+        printAllRecsByID(userId)
+
 
     print("\nPress any key to go back to Dashboard...")
     getch()
@@ -383,9 +559,12 @@ def recordNamesOnly(userId, value):
 
     print("--------------View All Record------------------\n")
 
-    printAllRecsByID(userId, value)
-    #todo implement code that displays "no records for this account"
+    if checkIfNoRecords(userId) == 0:
+        print("**No records in database**")
 
-    print("\n\nPress any key to go back to Dashboard...")
+    else:
+        printAllRecsByID(userId, value)
+
+    print("\nPress any key to go back to Dashboard...")
     getch()
     clear()
