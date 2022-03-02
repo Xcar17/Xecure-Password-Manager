@@ -17,6 +17,7 @@ from dbsetup import add_log
 from dbsetup import encryptAll, add_log3, adding_new_enc_sec_answers, checkDuplicateEmail
 from passwordRecovery import usernameRecovery, idRecovery, forgot_update_password, retrieveIDByName, retrieveIDByEmail
 from hashing import combHash
+from input_val import validatePassword
 
 #Function replaces input text as * in the cmd as the user enters their password. This is used so that the password is
 #not displayed to the screen for others to see.
@@ -285,7 +286,7 @@ def getEmail(): #todo Needs validation to make sure no repeat emails accepted
                 break
 
         except Exception:
-            print("\nInvalid Input. 246")
+            print("\nInvalid Input")
             print("Press any key to try again...")
             getch()
             clear()
@@ -323,16 +324,12 @@ def register():
                         if username == '0':
                             return '0'
 
-                        # todo implement usrnme validation func or find way to remove/prevent spaces from being entered
-                        # todo fond how to make the username not take in a password that is all numbers and spaces
-                        # todo better user input validation can be implemented
-
                         if username.isspace() or username == "":
                             print("\nUsername cannot be empty.\nPress any key to try again...")
                             getch()
 
-                        elif len(username) < 5:
-                            print("\nUsername must be at least 8 characters long.\nPress any key to try again...")
+                        elif len(username) < 3:
+                            print("\nUsername must be at least 3 characters long.\nPress any key to try again...")
                             getch()
 
                         elif username.isnumeric():
@@ -379,10 +376,25 @@ def register():
                             continue
 
 
-                        if len(secretPass) < 5:
-                            print("\nPassword cannot be less than 5 characters\nPress any key to try again...")
+                        validatePass = validatePassword(secretPass)
+
+                        if validatePass == 1:
+                            print("\nPassword must be at least 8 characters long\nPress any key to try again...")
                             getch()
                             continue
+
+                        elif validatePass == 2:
+                            print("\nPassword must be less than 20 characters long\nPress any key to try again...")
+                            getch()
+                            continue
+
+                        elif validatePass == 3:
+                            print("\nYour password must contain at least one of the following symbols: ~!@#$%^&*_-+='|\(){}[]:;\"\'<>,.?/"
+                                  "\nYour password must also contain at least one number, one uppercaser letter, and one lowercase letter"
+                                  "\nPress any key to try again...")
+                            getch()
+                            continue
+
 
                         else:
                           break

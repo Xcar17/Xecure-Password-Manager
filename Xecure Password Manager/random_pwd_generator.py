@@ -1,8 +1,8 @@
 import random
 
 #This will be used as the pool of characters to used for the random password generator
-GENKEY = "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890!@#$%^&*()-=_+[]\{}}|;',./<>?`~"
-PASSLEN = 18 #Determines the length of the password'
+GENKEY = "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890!&@#%$?"
+PASSLEN = 10 #Determines the length of the password'
 
 def generate_password():
     password = ''#Declaring my password variable that will hold the randomly generated pswd
@@ -13,3 +13,5 @@ def generate_password():
         password = password + generating_pswd
     #print("This is your new password: " + password)#this is test code
     return  password
+
+#print(generate_password())

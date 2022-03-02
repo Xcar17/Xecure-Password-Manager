@@ -6,6 +6,7 @@ from hashing import combHash
 import hashlib
 from msvcrt import getch
 from clear import myExit, clear
+from input_val import validatePassword, noleadingspace
 
 
 def sendEmail(email, code, retreival=None):
@@ -97,6 +98,7 @@ def forgot_update_password():
                 print("--------------Reset Password------------------\n[Enter '0' if you wish to go back to the previous screen]")
                 print("\nPlease enter the code that was just sent to the email:\n")
                 answer = input("Code: ")
+                answer = noleadingspace(answer)
 
                 if answer == '0':
                     break
@@ -105,15 +107,45 @@ def forgot_update_password():
                     hashEmail = hashlib.pbkdf2_hmac('sha256', email.encode("utf-8"), b'&%$#f^',182)# todo implement random salt test
                     newEmail = hashEmail.hex()
 
-                    clear()
-                    print("--------------Reset Password------------------\n[Enter '0' if you wish to cancel the password reset process]")
-                    print("\nEmail verified! Please enter a new password:")
-                    inputPass = input("New Password: ")
+                    while True:
+                        clear()
+                        print("--------------Reset Password------------------\n[Enter '0' if you wish to cancel the password reset process]")
+                        print("\nEmail verified! Please enter a new password:")
+                        inputPass = input("New Password: ")
 
-                    if inputPass == '0':
-                        print("\nPassword reset cancelled\nPress any key to go back...")
-                        getch()
-                        break
+                        if inputPass == '0':
+                            print("\nPassword reset cancelled\nPress any key to go back...")
+                            getch()
+                            break
+
+                        if inputPass == "":
+                            print("\nPassword cannot be empty\nPress any key to try again...")
+                            getch()
+                            continue
+
+                        validatePass = validatePassword(inputPass)
+
+                        if validatePass == 1:
+                            print("\nPassword must be at least 8 characters long\nPress any key to try again...")
+                            getch()
+                            continue
+
+                        elif validatePass == 2:
+                            print("\nPassword must be less than 20 characters long\nPress any key to try again...")
+                            getch()
+                            continue
+
+                        elif validatePass == 3:
+                            print(
+                                "\nYour password must contain at least one of the following symbols: ~!@#$%^&*_-+='|\(){}[]:;\"\'<>,.?/"
+                                "\nYour password must also contain at least one number, one uppercaser letter, and one lowercase letter"
+                                "\nPress any key to try again...")
+                            getch()
+                            continue
+
+
+                        else:
+                            break
 
                     newPassword = hashlib.pbkdf2_hmac('sha256', inputPass.encode("utf-8"), b'*@#d2',182).hex()
 
@@ -188,6 +220,7 @@ def update_master_password(id):
                     print("--------------Reset Password------------------\n[Enter '0' if you wish to go back to the Settings screen]")
                     print("\nPlease enter the code that was just sent to the email:")
                     answer = input("Code: ")
+                    answer = noleadingspace(answer)
 
                     if answer == '0':
                         return '0'
@@ -196,13 +229,44 @@ def update_master_password(id):
                         hashEmail = hashlib.pbkdf2_hmac('sha256', email.encode("utf-8"), b'&%$#f^',182)# todo implement random salt test
                         newEmail = hashEmail.hex()
 
-                        clear()
-                        print("--------------Reset Password------------------\n[Enter '0' if you wish to go back to the Settings screen]")
-                        print("\nEmail verified! Please enter a new password:")
-                        inputPass = input("New Password: ")
+                        while True:
 
-                        if inputPass == '0':
-                            return '0'
+                            clear()
+                            print("--------------Reset Password------------------\n[Enter '0' if you wish to go back to the Settings screen]")
+                            print("\nEmail verified! Please enter a new password:")
+                            inputPass = input("New Password: ")
+
+                            if inputPass == '0':
+                                return '0'
+
+                            if inputPass == "":
+                                print("\nPassword cannot be empty\nPress any key to try again...")
+                                getch()
+                                continue
+
+                            validatePass = validatePassword(inputPass)
+
+                            if validatePass == 1:
+                                print("\nPassword must be at least 8 characters long\nPress any key to try again...")
+                                getch()
+                                continue
+
+                            elif validatePass == 2:
+                                print("\nPassword must be less than 20 characters long\nPress any key to try again...")
+                                getch()
+                                continue
+
+                            elif validatePass == 3:
+                                print(
+                                    "\nYour password must contain at least one of the following symbols: ~!@#$%^&*_-+='|\(){}[]:;\"\'<>,.?/"
+                                    "\nYour password must also contain at least one number, one uppercaser letter, and one lowercase letter"
+                                    "\nPress any key to try again...")
+                                getch()
+                                continue
+
+
+                            else:
+                                break
 
                         newPassword = hashlib.pbkdf2_hmac('sha256', inputPass.encode("utf-8"), b'*@#d2',182).hex()
 
@@ -235,10 +299,10 @@ def update_master_password(id):
                         print('\nThe code entered does not match.')
 
                 else:
-                    print(f"\nThe {email} is not valid.103")
+                    print(f"\nThe {email} is not valid")
 
             else:
-                print(f"\nThe {email} is not valid.102")
+                print(f"\nThe {email} is not valid")
 
             print("Press any key to go back...")
             getch()
