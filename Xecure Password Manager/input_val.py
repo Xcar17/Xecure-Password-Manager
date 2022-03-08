@@ -1,7 +1,43 @@
+#must contain both @ and . characters
+def validateEmail(name):
+    ERROR_CODE, minLen, maxLen, minLenErr, maxLenErr, formatErr = None, 6,35, 1, 2, 3
+    name = str(name)
+
+    if minLen > len(name):
+        return minLenErr
+
+    if maxLen < len(name):
+        return maxLenErr
+
+    #req 2 (contains letters, numbers, symbols)
+    alpha = False
+    for c in name:
+        if c.isalpha():
+            alpha = True
+            break
+    if not alpha:
+        return formatErr
+
+    special = False
+    special2 = False
+    for c in name:
+        if c in "@":
+            special = True
+        if c in ".":
+            special2 = True
+
+    if not special or not special2:
+        return formatErr
 
 
+    return name
+
+#print(validateEmail("@@@@.1"))
+
+
+#min lenght 8, max length20, must include lowercase, uppercase, number, and special char
 def validatePassword(pwd):
-    ERROR_CODE, minLen, maxLen, minLenErr, maxLenErr, formatErr = None, 8,20, 1, 2, 3
+    ERROR_CODE, minLen, maxLen, minLenErr, maxLenErr, formatErr = None, 8,35, 1, 2, 3
     pwd = str(pwd)
     #pwd = pwd.strip()
 
@@ -60,21 +96,26 @@ def noleadingspace(userIn):
 #print(validatePassword("Password1!"))
 
 
-#Need symbols in order to have a strong password
-
-#Maybe Limit complicated record names
-
-#In records emails and password should have lesser password restrictions
-
-# Use for record names:         !?@.#&
-# Dont use:    ;-'*=\+|:()
-
-
 
 #Usernames should only be at least 3 chars, should have no symbols (no spaces). It should only be letters and numbers.
 def validateUsername(name):
-    ERROR_CODE, minLen, maxLen, minLenErr, maxLenErr, formatErr = None, 8,20, 1, 2, 3#todo might not need these many vars
+    ERROR_CODE, minLen, maxLen, minLenErr, maxLenErr, formatErr = None, 3,35, 1, 2, 3#todo might not need these many vars
     name = str(name)
+
+    if minLen > len(name):
+        return minLenErr
+
+    if maxLen < len(name):
+        return maxLenErr
+
+    #req 2 (contains letters, numbers, symbols)
+    alpha = False
+    for c in name:
+        if c.isalpha():
+            alpha = True
+            break
+    if not alpha:
+        return formatErr
 
     special = False
     for c in name:
@@ -87,12 +128,29 @@ def validateUsername(name):
     else:
         return formatErr
 
-#print(validateUsername("Carlos"))
+#print(validateUsername("ssdsdwe1"))
 
-#allow spaces, underscores and periods
+
+
+#allow spaces, underscores and periods. min length 3,, max length 35
 def validateRecordName(name):
-    ERROR_CODE, minLen, maxLen, minLenErr, maxLenErr, formatErr = None, 8,20, 1, 2, 3#todo might not need these many vars
+    ERROR_CODE, minLen, maxLen, minLenErr, maxLenErr, formatErr = None, 3,35, '1', '2', '3'#todo might not need these many vars
     name = str(name)
+
+    if minLen > len(name):
+        return minLenErr
+
+    if maxLen < len(name):
+        return maxLenErr
+
+    #req 2 (contains letters, numbers, symbols)
+    alpha = False
+    for c in name:
+        if c.isalpha():
+            alpha = True
+            break
+    if not alpha:
+        return formatErr
 
     special = False
     for c in name:
@@ -105,19 +163,33 @@ def validateRecordName(name):
     else:
         return formatErr
 
-print(validateRecordName("Carlos_Test.123. Extra"))
+#print(validateRecordName(".. a._"))
 
-################ALL OF THESE NEED TO BE LESS STRICT
 
-#validate recordusername: 3 letters, only special symbols, numbers
+
+########################DID NOT USE THIS ONE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#validate recordusername: no min length, 20 max length, only special symbols (!@#&), space, numbers
 #allow spaces, underscores, hyphen, and periods
 def validateRecordUserName(name):
-    ERROR_CODE, minLen, maxLen, minLenErr, maxLenErr, formatErr = None, 8,20, 1, 2, 3#todo might not need these many vars
+    ERROR_CODE, minLen, maxLen, minLenErr, maxLenErr, formatErr = None, 8,35, 1, 2, 3#todo might not need these many vars
     name = str(name)
+
+    if maxLen < len(name):
+        return maxLenErr
+
+    #req 2 (contains letters, numbers, symbols)
+    alpha = False
+    for c in name:
+        if c.isalpha():
+            alpha = True
+            break
+    if not alpha:
+        return formatErr
+
 
     special = False
     for c in name:
-        if c in "~`!@#$%^&*+='|\(){}[]:;?\"\'<>,/":
+        if c in "~$%^*_-+=`'|\(){}[]:;\"\'<>,.?/":
             special = True
             break
     if not special:
@@ -126,8 +198,40 @@ def validateRecordUserName(name):
     else:
         return formatErr
 
-print(validateRecordUserName("Test this_12.hi-bye"))
+#print(validateRecordUserName("   h!@#&"))
 
 
-#validate recordpassword
-#validate recordemail
+
+#
+def validateRecordPasswordAndEmail(name):
+    maxLen, maxLenErr, formatErr = 35, 2, 3 #todo might not need these many vars
+    name = str(name)
+
+    alpha = False
+    for c in name:
+        if c.isalpha():
+            alpha = True
+            break
+    if not alpha:
+        return formatErr
+
+    if maxLen < len(name):
+        return maxLenErr
+
+    else:
+        return name
+
+
+def validateRecordPass(name):
+    maxLen, maxLenErr = 35, 2 #
+    name = str(name)
+
+    if maxLen < len(name):
+        return maxLenErr
+
+    else:
+        return name
+
+#print(validateRecordPasswordAndEmail("paaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"))
+
+

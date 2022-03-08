@@ -16,6 +16,7 @@ from dbsetup import update_record_name, update_record_email, printAllRecsByID, \
     update_record_username, update_record_password, adding_new_enc_record, fetch_rec_by_id_gen, checkIfNoRecords, checkDuplicateRecName
 from random_pwd_generator import generate_password
 from passwordRecovery import retrieveIDByName
+from input_val import validateRecordName, validateRecordPasswordAndEmail, validateEmail, validateRecordPass
 import threading
 import time
 
@@ -112,9 +113,9 @@ def dashBoard(currentUser):
 
 # Function that retrieves a specified record (if found)
 def getRecord(userId):
-    clear()
     while True:
         try:
+            clear()
             print("--------------Retrieve Record------------------\n[Enter '0' if you wish to go back to the previous screen]")  # Asks user to name the record
             print("\nEnter the name of record you wish to retrieve. ")
             recordName = input("\nRecord name: ")
@@ -127,13 +128,39 @@ def getRecord(userId):
                 print("Press any key to try again...")
                 getch()
                 clear()
-                break
+                continue
+
+            if recordName.isnumeric():
+                print("\nRecord name cannot be composed of only numbers.\nPress any key to try again...")
+                getch()
+                continue
+
+            recordName = validateRecordName(recordName)
+
+            if recordName == '1':
+                print("\nRecord name must be at least 3 characters long\nPress any key to try again...")
+                getch()
+                continue
+
+            if recordName == '2':
+                print("\nRecord name must be less than 35 characters long\nPress any key to try again...")
+                getch()
+                continue
+
+            if recordName == '3':
+                print("\nRecord names must contain letters. Numbers and special characters are optional"
+                    "\nSpecial characters allowed: Underscores (_), spaces ( ), and periods (.)"  
+                    "\nPress any key to try again...")
+                getch()
+                continue
+
             elif recordName.isnumeric():
                 print("\nRecord name cannot be composed of only numbers.")
                 print("Press any key to try again...")
                 getch()
                 clear()
-                break
+                continue
+
             else:
                 print("Program will search for record.\n")
 
@@ -141,7 +168,7 @@ def getRecord(userId):
                 recordname1 = recordName
                 test = fetch_rec_by_id_gen(userId1, recordname1, "Record_Name" )
 
-                if recordname1 == test[2]:  # todo replace with code to check if record is in database
+                if recordname1 == test[2]:
 
                     # result = get_user_record(userId, recordName)
                     print(recordName + " Record found.\n")
@@ -160,13 +187,13 @@ def getRecord(userId):
                     break  # breaks to go back to dashboard
                 else:
                     print( recordName + " record not found.")
-                    print("Press any key to go back...")
+                    print("Press any key to try again...")
                     getch()
                     clear()
-                    break
+                    continue
 
         except Exception:
-            print("\nInvalid Input. 10001")
+            print("\nInvalid Input")
             print("Press any key to try again...")
             getch()
             clear()
@@ -174,16 +201,48 @@ def getRecord(userId):
 
 # Function allows user to add a new record to their pw manager account
 def addRecord(userId):
-    clear()
     while True:
         try:
             while True:
+                clear()
                 print("--------------Add Record------------------\n[Enter '0' if you wish to go back to the dashboard]")  # Asks for name of record to retrieve
                 print("\nEnter the name of the record (You will use this name to retrieve the record).")
-                recordName = input("\nRecord Name: ")  # todo implement input validation
+                recordName = input("\nRecord Name: ")
 
                 if recordName == '0':
                     return '0'
+
+                if recordName.isspace() or recordName == "":
+                    print("\nRecord name cannot be empty.")
+                    print("Press any key to try again...")
+                    getch()
+                    clear()
+                    continue
+
+                if recordName.isnumeric():
+                    print("\nRecord name cannot be composed of only numbers.\nPress any key to try again...")
+                    getch()
+                    continue
+
+                recordName = validateRecordName(recordName)
+
+                if recordName == '1':
+                    print("\nRecord name must be at least 3 characters long\nPress any key to try again...")
+                    getch()
+                    continue
+
+                if recordName == '2':
+                    print("\nRecord name must be less than 35 characters long\nPress any key to try again...")
+                    getch()
+                    continue
+
+                if recordName == '3':
+                    print("\nRecord names must contain letters. Numbers and special characters are optional"
+                          "\nSpecial characters allowed: Underscores (_), spaces ( ), and periods (.)"
+                          "\nPress any key to try again...")
+                    getch()
+                    continue
+
 
                 if checkDuplicateRecName(userId, recordName):
                     print("\nRecord name taken, please choose another ")
@@ -192,45 +251,86 @@ def addRecord(userId):
                     clear()
                     continue
 
-                if recordName.isspace() or recordName == "":
-                    print("\nRecord name cannot be empty.")
-                    print("Press any key to try again...")
-                    getch()
-                    clear()
 
-                elif recordName.isnumeric():
-                    print("\nRecord name cannot be composed of only numbers.")
-                    print("Press any key to try again...")
-                    getch()
-                    clear()
-
-                elif recordName == 'duplicate':  # todo implement function to detect if this user already has an account with this name. THis is temp code
-                    print("\nRecord for " + recordName + " already exists.")
-                    print("Press any key to try again...")
-                    getch()
-                    clear()
                 else:
                     break
+
             # Asks user to enter an email for their record
-            while True:  # todo implement input validation
-                print("\nEnter the Email for your " + recordName + " account.")
+            while True:
+                clear()
+                print("--------------Add Record------------------\n[Enter '0' if you wish to go back to the dashboard]")  # Asks for name of record to retrieve
+                print("\nEnter the Email for your " + recordName + " account. (Leave blank and press enter if no email linked to the account)")
                 recordEmail = input("Account Email: ")
 
                 if recordEmail == '0':
                     return '0'
 
-                # todo implement input validation for email
+
+                if recordEmail.isnumeric():
+                    print("\nRecord email cannot be composed of only numbers.\nPress any key to try again...")
+                    getch()
+                    continue
+
+                if recordEmail.isspace() or recordEmail == "":
+                    break
+
+                recordEmail = validateEmail(recordEmail)
+
+                if recordEmail == 1:
+                    print(
+                        "\nRecord email must be at least 6 characters long\nPress any key to try again...")
+                    getch()
+                    continue
+
+                if recordEmail == 2:
+                    print(
+                        "\nRecord email must be less than 35 characters long\nPress any key to try again...")
+                    getch()
+                    continue
+
+                if recordEmail == 3:
+                    print("\nRecord email must contain letters, the '@' symbol, and a period (.)"
+                          "\nPress any key to try again...")
+                    getch()
+                    continue
+
                 break
 
-            while True:  # todo implement input validation
-                print("\nEnter the Username for your " + recordName + " account.")
+
+
+            while True:
+                clear()
+                print("--------------Add Record------------------\n[Enter '0' if you wish to go back to the dashboard]")  # Asks for name of record to retrieve
+                print("\nEnter the Username for your " + recordName + " account. (Leave blank and press enter if no username linked to the account)")
                 recordUser = input("Account Username: ")
 
                 if recordUser == '0':
                     return '0'
 
-                # todo implement input validation for username
+
+                if recordUser.isnumeric():
+                    print("\nRecord username cannot be composed of only numbers.\nPress any key to try again...")
+                    getch()
+                    continue
+
+                if recordUser.isspace() or recordUser == "":
+                    break
+
+                recordUser = validateRecordPasswordAndEmail(recordUser)
+
+
+                if recordUser == 2:
+                    print("\nRecord username must be less than 35 characters long\nPress any key to try again...")
+                    getch()
+                    continue
+
+                if recordUser == 3:
+                    print("\nRecord username cannot be composed of only symbols and/or numbers.\nPress any key to try again...")
+                    getch()
+                    continue
+
                 break
+
 
             while True:  # Allows users the option to enter a randomly generated password for their account password
                 end = False
@@ -245,9 +345,6 @@ def addRecord(userId):
                 if menuSelection == '0':
                     return '0'
 
-                # todo implement input validation
-                # If 1 randomly generated password will be created
-
                 if menuSelection != "1" and menuSelection != "2" and menuSelection != "":
                     print("\nPlease select a number between 0 and 2.\nPress any key to try again...")
                     getch()
@@ -261,7 +358,7 @@ def addRecord(userId):
 
                 if menuSelection == '1':
 
-                    recordpassword = generate_password()  # todo place the function to generate a random password here
+                    recordpassword = generate_password()
                     moveOn = False
                     while moveOn == False:
                         clear()
@@ -309,23 +406,26 @@ def addRecord(userId):
                         if recordpassword == '0':
                             return '0'
 
-                        # todo implement input validation
                         if recordpassword.isspace() or recordpassword == "":
                             print("\nPassword cannot be empty.")
                             print("Press any key to try again...")
                             getch()
-                            clear()
+                            continue
 
-                        elif recordpassword.isnumeric():
-                            print("\nPassword cannot be composed of only numbers.")
-                            print("Press any key to try again...")
+
+                        recordpassword = validateRecordPass(recordpassword)
+
+                        if recordpassword == 2:
+                            print("\nRecord password must be less than 35 characters long\nPress any key to try again...")
                             getch()
-                            clear()
+                            continue
+
                         else:
                             end = True
                             break
 
-                if end == True:    # todo encrypt the 5 variables and send them to add_log2() function below
+
+                if end == True:
                     adding_new_enc_record(userId, recordName, recordEmail, recordUser, recordpassword)
                     print("\nRecord created!")
                     print("Press any key to go back to Dashboard...")
@@ -344,36 +444,55 @@ def addRecord(userId):
 
 # Function allows users to update a previously created record
 def updateRecord(userId):
-    clear()
     while True:
         try:
 
-            while True:  # todo implement input validation
+            while True:
                 try:
 
                     while True:
+                        clear()
                         print("--------------Update Record------------------\n[Enter '0' if you wish to go back to the previous screen]")  # User needs to name the record they wish to update
                         print("\nEnter the name of the record you want to update.")
-                        oldRecordName = input("\nRecord name: ")  # todo implement input validation
+                        oldRecordName = input("\nRecord name: ")
 
                         if oldRecordName == '0':
                             return '0'
 
-                        test = fetch_rec_by_id_gen(userId, oldRecordName, "Record_Name")
-
                         if oldRecordName.isspace() or oldRecordName == "":
-                            print("\nRecord name cannot be empty.")
+                            print("\nRecord name cannot be empty")
                             print("Press any key to try again...")
                             getch()
-                            clear()
                             continue
 
                         if oldRecordName.isnumeric():
-                            print("\nRecord name cannot be composed of only numbers.")
+                            print("\nRecord name cannot be composed of only numbers")
                             print("Press any key to try again...")
                             getch()
-                            clear()
                             continue
+
+                        oldRecordName = validateRecordName(oldRecordName)
+
+
+                        if oldRecordName == '1':
+                            print("\nRecord name must be at least 3 characters long\nPress any key to try again...")
+                            getch()
+                            continue
+
+                        if oldRecordName == '2':
+                            print("\nRecord name must be less than 35 characters long\nPress any key to try again...")
+                            getch()
+                            continue
+
+                        if oldRecordName == '3':
+                            print("\nRecord names must contain letters. Numbers and special characters are optional"
+                                  "\nSpecial characters allowed: Underscores (_), spaces ( ), and periods (.)"
+                                  "\nPress any key to try again...")
+                            getch()
+                            continue
+
+                        test = fetch_rec_by_id_gen(userId, oldRecordName, "Record_Name")
+
 
                         if oldRecordName == test[2]:
                             clear()
@@ -405,8 +524,6 @@ def updateRecord(userId):
                                 clear()
 
 
-                            # todo implement all changes specified above in db
-                            # todo implement input validation for all of these
                             elif menuSelection == 1:
                                 while True:
                                     clear()
@@ -416,15 +533,43 @@ def updateRecord(userId):
                                     if newRecordName == '0':
                                         break
 
-                                    if checkDuplicateRecName(userId, newRecordName):
-                                        print("\nRecord name taken, please choose another ")
+                                    if newRecordName == "" or newRecordName.isspace():
+                                        print("\nRecord name cannot be blank")
                                         print("Press any key to try again...")
                                         getch()
                                         clear()
                                         continue
 
-                                    if newRecordName == "":
-                                        print("\nRecord Name cannot be blank")
+                                    if newRecordName.isnumeric():
+                                        print("\nRecord name cannot be composed of only numbers")
+                                        print("Press any key to try again...")
+                                        getch()
+                                        continue
+
+                                    newRecordName = validateRecordName(newRecordName)
+
+                                    if newRecordName == '1':
+                                        print(
+                                            "\nRecord name must be at least 3 characters long\nPress any key to try again...")
+                                        getch()
+                                        continue
+
+                                    if newRecordName == '2':
+                                        print(
+                                            "\nRecord name must be less than 35 characters long\nPress any key to try again...")
+                                        getch()
+                                        continue
+
+                                    if newRecordName == '3':
+                                        print(
+                                            "\nRecord names must contain letters. Numbers and special characters are optional"
+                                            "\nSpecial characters allowed: Underscores (_), spaces ( ), and periods (.)"
+                                            "\nPress any key to try again...")
+                                        getch()
+                                        continue
+
+                                    if checkDuplicateRecName(userId, newRecordName):
+                                        print("\nRecord name taken, please choose another ")
                                         print("Press any key to try again...")
                                         getch()
                                         clear()
@@ -441,16 +586,43 @@ def updateRecord(userId):
                                 while True:
                                     clear()
                                     print("--------------Update Record Email------------------\n[Enter '0' if you wish to go back to the previous screen]\n")
-                                    newEmail = input("Enter the new record email: ")
+                                    newEmail = input("Enter the new record email (Leave blank and press enter if no email linked to the account): ")
 
                                     if newEmail == '0':
                                         break
 
-                                    if newEmail == "":
-                                        print("\nRecord email cannot be blank")
+                                    if newEmail.isnumeric():
+                                        print("\nRecord email cannot be composed of only numbers")
                                         print("Press any key to try again...")
                                         getch()
+                                        continue
+
+                                    if newEmail.isspace() or newEmail == "":
+                                        update_record_email(newEmail, userId, oldRecordName)
+                                        print("\nRecord email updated!\nPress any key to continue...")
+                                        getch()
                                         clear()
+                                        break
+
+
+                                    newEmail = validateEmail(newEmail)
+
+                                    if newEmail == 1:
+                                        print(
+                                            "\nRecord email must be at least 6 characters long\nPress any key to try again...")
+                                        getch()
+                                        continue
+
+                                    if newEmail == 2:
+                                        print(
+                                            "\nRecord email must be less than 35 characters long\nPress any key to try again...")
+                                        getch()
+                                        continue
+
+                                    if newEmail == 3:
+                                        print("\nRecord email must contain letters, the '@' symbol, and a period (.)"
+                                            "\nPress any key to try again...")
+                                        getch()
                                         continue
 
                                     update_record_email(newEmail, userId, oldRecordName)
@@ -463,19 +635,38 @@ def updateRecord(userId):
                                 while True:
                                     clear()
                                     print("--------------Update Record Username------------------\n[Enter '0' if you wish to go back to the previous screen]\n")
-                                    newRecordName = input("Enter the new record username: ")
+                                    newRecordUserName = input("Enter the new record username (Leave blank and press enter if no username linked to the account): ")
 
-                                    if newRecordName == '0':
+                                    if newRecordUserName == '0':
                                         break
 
-                                    if newRecordName == "":
-                                        print("\nRecord username cannot be blank")
+                                    if newRecordUserName.isnumeric():
+                                        print("\nRecord username cannot be composed of only numbers")
                                         print("Press any key to try again...")
                                         getch()
-                                        clear()
                                         continue
 
-                                    update_record_username(newRecordName, userId, oldRecordName)
+                                    if newRecordUserName.isspace() or newRecordUserName == "":
+                                        update_record_username(newRecordUserName, userId, oldRecordName)
+                                        print("\nRecord username updated!\nPress any key to continue...")
+                                        getch()
+                                        clear()
+                                        break
+
+
+                                    newRecordUserName = validateRecordPasswordAndEmail(newRecordUserName)
+
+                                    if newRecordUserName == 2:
+                                        print("\nRecord name must be less than 35 characters long\nPress any key to try again...")
+                                        getch()
+                                        continue
+
+                                    if newRecordUserName == 3:
+                                        print("\nRecord username cannot be composed of only symbols and/or numbers.\nPress any key to try again...")
+                                        getch()
+                                        continue
+
+                                    update_record_username(newRecordUserName, userId, oldRecordName)
                                     print("\nRecord username updated!\nPress any key to continue...")
                                     getch()
                                     clear()
@@ -490,11 +681,19 @@ def updateRecord(userId):
                                     if newRecordPassword == '0':
                                         break
 
-                                    if newRecordPassword == "":
-                                        print("\nRecord username cannot be blank")
+                                    if newRecordPassword == "" or newRecordPassword.isspace():
+                                        print("\nRecord password cannot be blank")
                                         print("Press any key to try again...")
                                         getch()
                                         clear()
+                                        continue
+
+                                    newRecordPassword = validateRecordPass(newRecordPassword)
+
+
+                                    if newRecordPassword == 2:
+                                        print("\nRecord password must be less than 35 characters long\nPress any key to try again...")
+                                        getch()
                                         continue
 
                                     update_record_password(newRecordPassword, userId, oldRecordName)
@@ -516,7 +715,7 @@ def updateRecord(userId):
 
 
                         except Exception:
-                            print("\nInvalid input. Please enter a number between 1 and 5\nPress any key to try again...")
+                            print("\nInvalid input. Please enter a number between 0 and 4\nPress any key to try again...")
                             getch()
                             clear()
 
@@ -529,7 +728,7 @@ def updateRecord(userId):
                     clear()
                 break
         except Exception:
-            print("\nInvalid Input. 10005")
+            print("\nInvalid Input!")
             print("Press any key to try again...")
             getch()
             clear()

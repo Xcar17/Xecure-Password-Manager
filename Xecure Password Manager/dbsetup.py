@@ -7,8 +7,6 @@ DB_NAME = "XecuredDBTest4"
 
 def use_database(DB_NAME):
     cursor.execute("USE {}".format(DB_NAME))
-    #print("Welcome to the database " + DB_NAME )
-
 
 def create_database():
     cursor.execute("CREATE DATABASE IF NOT EXISTS {} DEFAULT CHARACTER SET 'utf8'".format(DB_NAME))
@@ -109,33 +107,33 @@ def prompt_user2():
 
 ##################################################################
 
-TABLES3 = {}
-
-TABLES3['SecTab'] = (
-    "CREATE TABLE IF NOT EXISTS Rec_Sec ("
-    " recordId int(11) NOT NULL AUTO_INCREMENT, userId varchar(250), FOREIGN KEY(userId) REFERENCES Registered_Users(id),"
-    " Answer1 varchar(250) NOT NULL, Answer2 varchar(250) NOT NULL, Answer3 varchar(250) NOT NULL, "
-    "Answer4 varchar(250) NOT NULL,  Answer5 varchar(250) NOT NULL,PRIMARY KEY (recordId))"
-)
-
-
-def create_tables3():
-    cursor.execute("USE {}".format(DB_NAME))
-
-    for table_name in TABLES3:
-        table_description = TABLES3[table_name]
-        try:
-            #print("Creating table ({}) ".format(table_name), end="")
-            cursor.execute(table_description)
-        except mysql.connector.Error as err:
-            #if err.errno == errorcode.ER_TABLE_EXISTS_ERROR:
-                #print("Table Already Exists")
-            #else:
-                print(err.msg)
-    db.commit()
-
-
-create_tables3()
+# TABLES3 = {}
+#
+# TABLES3['SecTab'] = (
+#     "CREATE TABLE IF NOT EXISTS Rec_Sec ("
+#     " recordId int(11) NOT NULL AUTO_INCREMENT, userId varchar(250), FOREIGN KEY(userId) REFERENCES Registered_Users(id),"
+#     " Answer1 varchar(250) NOT NULL, Answer2 varchar(250) NOT NULL, Answer3 varchar(250) NOT NULL, "
+#     "Answer4 varchar(250) NOT NULL,  Answer5 varchar(250) NOT NULL,PRIMARY KEY (recordId))"
+# )
+#
+#
+# def create_tables3():
+#     cursor.execute("USE {}".format(DB_NAME))
+#
+#     for table_name in TABLES3:
+#         table_description = TABLES3[table_name]
+#         try:
+#             #print("Creating table ({}) ".format(table_name), end="")
+#             cursor.execute(table_description)
+#         except mysql.connector.Error as err:
+#             #if err.errno == errorcode.ER_TABLE_EXISTS_ERROR:
+#                 #print("Table Already Exists")
+#             #else:
+#                 print(err.msg)
+#     db.commit()
+#
+#
+# create_tables3()
 
 
 
@@ -147,18 +145,18 @@ def add_log3(userId, Answer1, Answer2, Answer3, Answer4, Answer5):
     #print ("Added log {}".format(log_id))
 
 
+
+
+
+
 #################################################Setup Ends Here##################################################################################################
 
 def update_record_name(newRecord, id, rcName):
     oldCiphRecName = fetch_cipher_by_id_gen(id, rcName, "Record_Name") #Contains current record name
     newRecord, rcName = encryptAll(id, [newRecord, rcName]) #encrypts both the old and new recordnames to compare
-    #try:
     sql = ("UPDATE User_Records SET Record_Name = %s WHERE userId = %s AND Record_Name = %s")
     cursor.execute(sql, (newRecord, id, oldCiphRecName)) #uses the the current/old record name and Id, to change the record name to the newly encrypted newRecord
     db.commit()
-    #except:
-    #    print("THAT RECEORD DOESN'T EXIST!")
-    #print("Log updated!")
 
 def update_user_ID(newID, oldID):
     alterOff = "SET FOREIGN_KEY_CHECKS = 0;"
@@ -173,28 +171,20 @@ def update_user_ID(newID, oldID):
     alterOn = "SET FOREIGN_KEY_CHECKS = 1;"
     cursor.execute(alterOn)
     db.commit()
-    #print("Log updated!")
-
 
 def update_record_email(newEmail, id, recName):
     oldCiphRecEmail = fetch_cipher_by_id_gen(id, recName, "Email")
     newCipherEmail = encryptAll(id, [newEmail])[0]
-    #try:
     sql = ("UPDATE User_Records SET Email = %s WHERE userId = %s AND Email = %s")
     cursor.execute(sql, (newCipherEmail, id, oldCiphRecEmail))
     db.commit()
-    #print("Log updated!")
-
 
 def update_record_username(text, id, rcName):
     oldCiphRecEmail = fetch_cipher_by_id_gen(id, rcName, "User_Name")
     newCipherEmail = encryptAll(id, [text])[0]
-    #try:
     sql = ("UPDATE User_Records SET User_Name = %s WHERE userId = %s AND User_Name = %s")
     cursor.execute(sql, (newCipherEmail, id, oldCiphRecEmail))
     db.commit()
-    #print("Log updated!")
-
 
 def update_record_password(text, id, rcName):
     oldCiphRecEmail = fetch_cipher_by_id_gen(id, rcName, "Account_Password")
@@ -203,8 +193,6 @@ def update_record_password(text, id, rcName):
     sql = ("UPDATE User_Records SET Account_Password = %s WHERE userId = %s AND Account_Password = %s")
     cursor.execute(sql, (newCipherEmail, id, oldCiphRecEmail))
     db.commit()
-    #print("Log updated!")
-
 
 def delete_record(text, id):
     oldCiphRecName = fetch_cipher_by_id_gen(id, text, "Record_Name") #Contains current record name
@@ -218,7 +206,6 @@ def update_master_email(inputEmail, id):
     sql = ("UPDATE Registered_Users SET Email = %s WHERE Id = %s")
     cursor.execute(sql, (encryptedEmail, id))
     db.commit()
-    #print("Log updated!")
 
 def delete_all_records(id):
     sql = ("DELETE FROM User_Records WHERE userId = %s")
@@ -227,8 +214,7 @@ def delete_all_records(id):
     print("\nAll records have been deleted!")
 
 
-
-####################################################################################################todo This is where my tutoring code starts####################################################################################
+#   Encryption Decryption Starts
 
 # encrypt a given plain_text
 def encrypt( id,  plain_text):
@@ -269,7 +255,6 @@ def retrieveKey(id):
         f = open("database.txt", "r")
 
         # read the plain text key from the file
-
         database_lines = f.readlines()
         for record in database_lines:
             record_fields = record.split('\t')
@@ -283,12 +268,10 @@ def retrieveKey(id):
 
 def decrypt(id, cipher_text):
     #retireve the key and create fernet objct
-
     key = retrieveKey(id)
     if key is None:
         print("ERROR!  ID NOT IN DATABASE.TXT")
         return
-
     cipher_suite = Fernet(key)
 
     # get  the "plain bytes text" from the cipher text
@@ -305,17 +288,11 @@ def encryptAll(id, list_2_enc):
     enc_list = []
     for ele in list_2_enc:
         enc_list.append(encrypt(id, ele))
-
     return tuple(enc_list)
-
 
 
 ################################################### DECRYPT/ENCRYPT ###################################################################
 def printAllRecsByID(id, nameOnly = False):
-    # todo implement code that displays "no records found for this account"
-
-
-
     sql = ("select * from User_Records ")
     cursor.execute(sql )
     results = cursor.fetchall()
@@ -393,8 +370,6 @@ def fetch_cipher_by_id_gen(id, recName, gen_cat):
 
 # gonna use this to fetch the next user id
 def next_user_id():
-    #try:
-    #sql = ("SELECT * FROM User_Records WHERE userId = " + str(id) )
     sql = ("SELECT * FROM Registered_Users" )
     cursor.execute(sql)
     results = cursor.fetchall()
@@ -409,25 +384,16 @@ def checkIfNoRecords(userId):
 
 
 def checkDuplicateRecName(usr_id, newName):
-    # try:
     sql = ("select * from User_Records where userId = %s")
     cursor.execute(sql, (usr_id,) )
     results = cursor.fetchall()
-
     curNames = [decrypt(usr_id, rec[2]) for rec in results]
-
     return newName in curNames
 
 
 def checkDuplicateEmail(newEmail):
-    # try:
     sql = ("select * from Registered_Users")
     cursor.execute(sql )
     results = cursor.fetchall()
-
     curEmails = [decrypt(rec[0], rec[2]) for rec in results]
-
     return newEmail in curEmails
-
-#print(next_user_id())
-
