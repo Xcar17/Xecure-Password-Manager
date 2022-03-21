@@ -3,7 +3,7 @@ from mysql.connector import errorcode
 from cryptography.fernet import Fernet
 import mysql.connector
 
-DB_NAME = "XecuredDBTest4"
+DB_NAME = "XecuredDBTest11"
 
 def use_database(DB_NAME):
     cursor.execute("USE {}".format(DB_NAME))
@@ -81,7 +81,9 @@ def create_tables2():
             #else:
                 print(err.msg)
     db.commit()
-
+    sql = "ALTER TABLE user_records AUTO_INCREMENT=700000;"
+    cursor.execute(sql)
+    db.commit()
 
 create_tables2()
 

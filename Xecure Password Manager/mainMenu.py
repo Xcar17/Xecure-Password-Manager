@@ -4,48 +4,19 @@
 #various sites. Login credentials can only be accessed by the root user. Application uses SHA256 to hash login
 #credentials and encrypts the records of the user inside a secure MySQL database.
 
-#This module contai1ns the Login/Register menu that gives users access to the application and records.
+#This module contains the Login/Register menu that gives users access to the application and records.
 
 import os
-import sys
-import getpass
 import hashlib
 from msvcrt import getch
 from clear import myExit, clear
 from dashboard import dashBoard
 from dbsetup import add_log
-from dbsetup import encryptAll, add_log3, adding_new_enc_sec_answers, checkDuplicateEmail
+from dbsetup import encryptAll, checkDuplicateEmail
 from passwordRecovery import usernameRecovery, forgot_update_password, retrieveIDByName, retrieveIDByEmail
 from hashing import combHash
 from input_val import validatePassword, validateRecordPass, validateEmail, validateUsername
-
-
-#Function replaces input text as * in the cmd as the user enters their password. This is used so that the password is
-#not displayed to the screen for others to see.
-def hidePassword(prompt='\nPlease enter your password: '): #todo Pwd needs validation
-    if sys.stdin is not sys.__stdin__:
-        usrPsswd = getpass.getpass(prompt)
-        return usrPsswd
-    else:
-        usrPsswd = ""
-        sys.stdout.write(prompt)
-        sys.stdout.flush()
-        while True:
-            myKey = ord(getch())
-            if myKey == 13:
-                sys.stdout.write('\n')
-                return usrPsswd
-
-            if myKey == 8:
-                if len(usrPsswd) > 0:
-                    sys.stdout.write('\b' + ' ' + '\b')
-                    sys.stdout.flush()
-                    usrPsswd = usrPsswd[:-1]
-            else:
-                char = chr(myKey)
-                sys.stdout.write('*')
-                sys.stdout.flush()
-                usrPsswd = usrPsswd + char
+from hidePassword import hidePassword
 
 
 #Called when a new user wants to register. Checks inside the db to see if the username entered is already in the db
@@ -109,7 +80,7 @@ def mainMenu():
                     clear()
 
         except Exception:
-            print("\nInvalid Input.")
+            print("\nInvalid Input. Please enter a number between 1 and 4.")
             print("Press any key to try again...")
             getch()
             clear()
@@ -127,7 +98,8 @@ def login():
             #If the database is empty, no user can log into the application, so an error is displayed to let users know
             if os.path.getsize("accdatabase") == 0:#If accdatabase file is empty, clear screen and print message
                 clear()
-                print("Database is empty!\n")
+                print("--------------Login Screen------------------\n")
+                print("Database is empty! Please register to use the application.\n")
                 print("Press any key to go back to the login screen...")
                 getch()
                 clear()
@@ -145,20 +117,20 @@ def login():
                 while True:
                     clear()
                     print("--------------Login Screen------------------\n[Enter '0' if you wish to go back to the"
-                          " previous screen]")
+                          " previous screen]\n\nPlease enter the following:")
 
                     if errorCount == 1:
-                        print("\nThe application will close after another failed login attempt")
+                        print("\nThe application will close after another failed login attempt.")
 
                     #username var will contain the user's entered password
-                    username = input("\nPlease enter your username: ")
+                    username = input("\nAccount Username: ")
 
                     if username == '0':
                         return '0'
 
                     if username.isspace() or username == "":
                         errorCount -= 1
-                        print("\nUser name cannot be empty")
+                        print("\nUser name cannot be empty.")
                         if errorCount == 0:
                             print("The application will now close...")
                             getch()
@@ -174,12 +146,12 @@ def login():
                     if username == 2:
                         errorCount -= 1
                         if errorCount == 0:
-                            print("\nUsername must be less than 35 characters long")
+                            print("\nUsername must be less than 35 characters long.")
                             print("\nThe application will now close...")
                             getch()
                             exit(0)
 
-                        print("\nUsername must be less than 35 characters long\nPress any key to try again...")
+                        print("\nUsername must be less than 35 characters long.\nPress any key to try again...")
                         getch()
                         continue
 
@@ -205,7 +177,7 @@ def login():
 
                     if userPassword.isspace() or userPassword == "":
                         errorCount -= 1
-                        print("\nPassword cannot be empty")
+                        print("\nPassword cannot be empty.")
                         if errorCount == 0:
                             print("The application will now close...")
                             getch()
@@ -222,12 +194,12 @@ def login():
                         errorCount -= 1
 
                         if errorCount == 0:
-                            print("\nPassword must be less than 35 characters long")
+                            print("\nPassword must be less than 35 characters long.")
                             print("The application will now close...")
                             getch()
                             exit(0)
 
-                        print("\nPassword must be less than 35 characters long\nPress any key to try again...")
+                        print("\nPassword must be less than 35 characters long.\nPress any key to try again...")
                         getch()
                         continue
 
@@ -257,7 +229,7 @@ def login():
 
                         else:
                             errorCount -= 1
-                            print("\nInvalid Login")
+                            print("\nInvalid Login.")
                             if errorCount == 0:
                                 print("The application will now close...")
                                 getch()
@@ -275,7 +247,7 @@ def login():
                     else:
                         #Used to count failed login attempts
                         errorCount -= 1
-                        print("\nInvalid Login")
+                        print("\nInvalid Login.")
                         if errorCount == 0:
                             print("The application will now close...")
                             getch()
@@ -288,13 +260,13 @@ def login():
                 #This code will run if the user is fully authenticated
                 clear()
                 print("--------------Logged In-----------------")
-                print("\nThank you for logging in " + username + "\nPress any key to go to the Dashboard...")
+                print("\nThank you for logging in " + username + ".\nPress any key to go to the Dashboard...")
                 getch()
                 dashBoard(currentUser)
                 break
 
         except Exception:
-            print("\nInvalid Input")
+            print("\nInvalid Input.")
             print("Press any key to try again...")
             getch()
             clear()
@@ -302,7 +274,7 @@ def login():
 
 #Prompts the user to type in their email. Email will be used to reset account when needed (Future Implementation)
 #Returns the user's email
-def getEmail(): #todo Needs validation to make sure no repeat emails accepted
+def getEmail():
     while True:
         try:
             clear()
@@ -320,7 +292,7 @@ def getEmail(): #todo Needs validation to make sure no repeat emails accepted
                 continue
 
             if useremail.isspace() or useremail == "":
-                print("\nEmail cannot be empty\nPress any key to try again...")
+                print("\nEmail cannot be empty.\nPress any key to try again...")
                 getch()
                 clear()
                 continue
@@ -332,17 +304,17 @@ def getEmail(): #todo Needs validation to make sure no repeat emails accepted
             useremail = validateEmail(useremail)
 
             if useremail == 1:
-                print("\nEmail must be at least 6 characters long\nPress any key to try again...")
+                print("\nEmail must be at least 6 characters long.\nPress any key to try again...")
                 getch()
                 continue
 
             if useremail == 2:
-                print("\nEmail must be less than 35 characters long\nPress any key to try again...")
+                print("\nEmail must be less than 35 characters long.\nPress any key to try again...")
                 getch()
                 continue
 
             if useremail == 3:
-                print("\nEmail must contain letters, the '@' symbol, and a period (.)"
+                print("\nEmail must contain letters, the '@' symbol, and a period (.)."
                       "\nPress any key to try again...")
                 getch()
                 continue
@@ -352,7 +324,7 @@ def getEmail(): #todo Needs validation to make sure no repeat emails accepted
                 break
 
         except Exception:
-            print("\nInvalid Input")
+            print("\nInvalid Input.")
             print("Press any key to try again...")
             getch()
             clear()
@@ -376,7 +348,7 @@ def register():
 
                         escape += 1
                         hashEmail = hashlib.pbkdf2_hmac('sha256', usrEmail.encode("utf-8"), b'&%$#f^',
-                                                        182)  # todo implement random salt test
+                                                        182)
                         newEmail = hashEmail.hex()
 
                     username = ""
@@ -390,12 +362,12 @@ def register():
                             return '0'
 
                         if username.isspace() or username == "":
-                            print("\nUsername cannot be empty\nPress any key to try again...")
+                            print("\nUsername cannot be empty.\nPress any key to try again...")
                             getch()
                             continue
 
                         if username.isnumeric():
-                            print("\nUsername cannot be composed of only numbers\nPress any key to try again...")
+                            print("\nUsername cannot be composed of only numbers.\nPress any key to try again...")
                             getch()
                             continue
 
@@ -403,19 +375,19 @@ def register():
 
                         if username == 1:
                             print(
-                                "\nUsername must be at least 3 characters long\nPress any key to try again...")
+                                "\nUsername must be at least 3 characters long.\nPress any key to try again...")
                             getch()
                             continue
 
                         if username == 2:
                             print(
-                                "\nUsername must be less than 35 characters long\nPress any key to try again...")
+                                "\nUsername must be less than 35 characters long.\nPress any key to try again...")
                             getch()
                             continue
 
                         if username == 3:
                             print("\nUsernames must be composed of only letters and numbers. No spaces or special "
-                                  "characters allowed"
+                                  "characters allowed."
                                   "\nPress any key to try again...")
                             getch()
                             continue
@@ -439,8 +411,9 @@ def register():
                         print("Press any key to try again...")
                         getch()
                         clear()
-                        #If the user already exists the user will be forced to enter a new name
-                        #todo need to implement a way to exit this if the user wants to back out
+                        continue
+
+
                     else:
                         break
                         #If the username is not already taken the program will continue and the user can enter their psswd
@@ -455,30 +428,30 @@ def register():
                             return '0'
 
                         if secretPass == "" or secretPass.isspace():
-                            print("\nPassword cannot be empty\nPress any key to try again...")
+                            print("\nPassword cannot be empty.\nPress any key to try again...")
                             getch()
                             continue
 
                         if secretPass.isnumeric():
-                            print("\nUsername cannot be composed of only numbers\nPress any key to try again...")
+                            print("\nPassword cannot be composed of only numbers.\nPress any key to try again...")
                             getch()
                             continue
 
                         validatePass = validatePassword(secretPass)
 
                         if validatePass == 1:
-                            print("\nPassword must be at least 8 characters long\nPress any key to try again...")
+                            print("\nPassword must be at least 8 characters long.\nPress any key to try again...")
                             getch()
                             continue
 
                         elif validatePass == 2:
-                            print("\nPassword must be less than 20 characters long\nPress any key to try again...")
+                            print("\nPassword must be less than 35 characters long.\nPress any key to try again...")
                             getch()
                             continue
 
                         elif validatePass == 3:
                             print("\nYour password must contain at least one of the following symbols: ~!@#$%^&*_-+='|\(){}[]:;\"\'<>,.?/"
-                                  "\nYour password must also contain at least one number, one uppercaser letter, and one lowercase letter"
+                                  "\nYour password must also contain at least one number, one uppercaser letter, and one lowercase letter."
                                   "\nPress any key to try again...")
                             getch()
                             continue
@@ -488,7 +461,7 @@ def register():
 
 
                 # The entered password is encoded, salted and hashed inside the h hash object
-                h = hashlib.pbkdf2_hmac('sha256', secretPass.encode("utf-8"), b'*@#d2', 182)#todo implement random salt test
+                h = hashlib.pbkdf2_hmac('sha256', secretPass.encode("utf-8"), b'*@#d2', 182)
 
                 # A newpass variable holds the hex value of the hashed password
                 newPass = h.hex()
@@ -497,7 +470,8 @@ def register():
                 users = open("accdatabase", "a")
 
                 # Writes to the text database.txt the new user information in the specified format
-                users.write("Email: " + newEmail + "\nUsername: " + newUser + "\nPassword: " + newPass + "\n\n")
+                #users.write("Email: " + newEmail + "\nUsername: " + newUser + "\nPassword: " + newPass + "\n\n")
+                users.write( newEmail + "\n" + newUser + "\n" + newPass + "\n\n")
 
                 #Closes the file
                 users.close()
@@ -511,18 +485,18 @@ def register():
                 username, usrEmail = encryptAll(usrID, [username, usrEmail])
 
 
-                add_log(usrID, username, usrEmail)#todo make sure username and usrEmail are sanitized
+                add_log(usrID, username, usrEmail)
 
                 #User is registered and confirmation message printed to screen
                 print("--------------Register------------------")
-                print("\nThank you for registering")
+                print("\nThank you for registering!")
                 print("Press any key to go back to the main menu...")
                 getch()
                 clear()
                 break
 
          except Exception:
-             print("\nInvalid Input")
+             print("\nInvalid Input.")
              print("Press any key to try again...")
              getch()
              clear()
@@ -532,8 +506,18 @@ def forgotLogin():
     while True:
         try:
             clear()
-            print("--------------Login Help------------------")
-            print("\nPlease select between the following options:\n")  # Presents user's with all options available
+            print("--------------Login Help------------------\n")
+
+            if os.path.getsize("accdatabase") == 0:#If accdatabase file is empty, clear screen and print message
+                print("Database is empty! Please register to use this feature.\n")
+                print("Press any key to go back to the login screen...")
+                getch()
+                clear()
+                break
+                #The application will loop back to the log in menu after the error message is displayed
+
+
+            print("Please select between the following options:\n")  # Presents user's with all options available
             print("[1] Forgot Username")
             print("[2] Forgot Password")
             print("[0] Back to login screen\n")
@@ -552,7 +536,7 @@ def forgotLogin():
                 clear()
 
         except Exception:
-            print("\nInvalid Input.")
+            print("\nInvalid Input. Please select a number between 0 and 2.")
             print("Press any key to try again...")
             getch()
             clear()

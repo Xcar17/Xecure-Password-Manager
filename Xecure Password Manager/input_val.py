@@ -65,6 +65,15 @@ def validatePassword(pwd):
     if not hasCap:
         return formatErr
 
+
+    haslowCap = False
+    for c in pwd:
+        if c.islower():
+            haslowCap = True
+            break
+    if not haslowCap:
+        return formatErr
+
     numerical = False
     for c in pwd:
         if c.isnumeric():
@@ -167,42 +176,7 @@ def validateRecordName(name):
 
 
 
-########################DID NOT USE THIS ONE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-#validate recordusername: no min length, 20 max length, only special symbols (!@#&), space, numbers
-#allow spaces, underscores, hyphen, and periods
-def validateRecordUserName(name):
-    ERROR_CODE, minLen, maxLen, minLenErr, maxLenErr, formatErr = None, 8,35, 1, 2, 3#todo might not need these many vars
-    name = str(name)
-
-    if maxLen < len(name):
-        return maxLenErr
-
-    #req 2 (contains letters, numbers, symbols)
-    alpha = False
-    for c in name:
-        if c.isalpha():
-            alpha = True
-            break
-    if not alpha:
-        return formatErr
-
-
-    special = False
-    for c in name:
-        if c in "~$%^*_-+=`'|\(){}[]:;\"\'<>,.?/":
-            special = True
-            break
-    if not special:
-        return name
-
-    else:
-        return formatErr
-
-#print(validateRecordUserName("   h!@#&"))
-
-
-
-#
+#checks if the input is alphabetic, checks that the legth is less tha 35
 def validateRecordPasswordAndEmail(name):
     maxLen, maxLenErr, formatErr = 35, 2, 3 #todo might not need these many vars
     name = str(name)

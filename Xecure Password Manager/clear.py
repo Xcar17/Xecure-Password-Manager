@@ -28,7 +28,7 @@ def myExit():
             end = int(input("Selection: "))
 
             if end == 1:#if 1(yes) the application will close
-                print("\nThank you for using Xecure Password Manager. \nPress any key to exit the application...")
+                print("\nThank you for using Xecure Password Manager! \nPress any key to exit the application...")
                 getch()
                 exit(0)
             elif end == 2:#if 2(no) the application will go back to prior screen
@@ -41,7 +41,7 @@ def myExit():
                 clear()
 
         except Exception:
-            print("\nInvalid Input.")
+            print("\nInvalid Input. Please enter a number between 1 and 2.")
             print("Press any key to try again...")
             getch()
             clear()

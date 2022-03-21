@@ -1,5 +1,7 @@
+import socket
+
 from database import cursor
-from dbsetup import decrypt, update_master_email, update_user_ID
+from dbsetup import decrypt, update_master_email, update_user_ID, checkDuplicateEmail
 from random_pwd_generator import generate_password
 import smtplib
 from hashing import combHash
@@ -7,6 +9,8 @@ import hashlib
 from msvcrt import getch
 from clear import myExit, clear
 from input_val import validatePassword, noleadingspace, validateEmail, validateRecordPass
+from hidePassword import hidePassword
+import time
 
 
 def sendEmail(email, code, retreival=None):
@@ -80,10 +84,10 @@ def forgot_update_password():
             email = input("Email: ")
 
             if email == '0':
-                break
+                return
 
             if email == "" or email.isspace():
-                print("\nEmail cannot be blank.")
+                print("\nEmail cannot be empty.")
                 print("Press any key to try again...")
                 getch()
                 clear()
@@ -101,17 +105,17 @@ def forgot_update_password():
 
 
             if email == 1:
-                print("\nEmail must be at least 6 characters long\nPress any key to try again...")
+                print("\nEmail must be at least 6 characters long.\nPress any key to try again...")
                 getch()
                 continue
 
             if email == 2:
-                print("\nEmail must be less than 35 characters long\nPress any key to try again...")
+                print("\nEmail must be less than 35 characters long.\nPress any key to try again...")
                 getch()
                 continue
 
             if email == 3:
-                print("\nEmail must contain letters, the '@' symbol, and a period (.)"
+                print("\nEmail must contain letters, the '@' symbol, and a period (.)."
                       "\nPress any key to try again...")
                 getch()
                 continue
@@ -133,7 +137,7 @@ def forgot_update_password():
                         return 0
 
                     if answer == "" or answer.isspace():
-                        print("\nCode cannot be blank")
+                        print("\nCode cannot be empty.")
                         print("Press any key to try again...")
                         getch()
                         clear()
@@ -143,14 +147,11 @@ def forgot_update_password():
 
                     answer = validateRecordPass(answer)
                     if answer == 2:
-                        print("\nCode must be less than 35 characters long\nPress any key to try again...")
+                        print("\nCode must be less than 35 characters long.\nPress any key to try again...")
                         getch()
                         continue
 
                     break
-
-
-
 
                 if code == answer:
                     hashEmail = hashlib.pbkdf2_hmac('sha256', email.encode("utf-8"), b'&%$#f^',182)# todo implement random salt test
@@ -160,34 +161,35 @@ def forgot_update_password():
                         clear()
                         print("--------------Reset Password------------------\n[Enter '0' if you wish to cancel the password reset process]")
                         print("\nEmail verified! Please enter a new password:")
-                        inputPass = input("New Password: ")
+                        #inputPass = input("New Password: ")
+                        inputPass = hidePassword()
 
                         if inputPass == '0':
-                            print("\nPassword reset cancelled\nPress any key to go back...")
+                            print("\nPassword reset cancelled!\nPress any key to go back...")
                             getch()
-                            break
+                            return
 
                         if inputPass == "" or inputPass.isspace():
-                            print("\nPassword cannot be empty\nPress any key to try again...")
+                            print("\nPassword cannot be empty.\nPress any key to try again...")
                             getch()
                             continue
 
                         validatePass = validatePassword(inputPass)
 
                         if validatePass == 1:
-                            print("\nPassword must be at least 8 characters long\nPress any key to try again...")
+                            print("\nPassword must be at least 8 characters long.\nPress any key to try again...")
                             getch()
                             continue
 
                         elif validatePass == 2:
-                            print("\nPassword must be less than 35 characters long\nPress any key to try again...")
+                            print("\nPassword must be less than 35 characters long.\nPress any key to try again...")
                             getch()
                             continue
 
                         elif validatePass == 3:
                             print(
                                 "\nYour password must contain at least one of the following symbols: ~!@#$%^&*_-+='|\(){}[]:;\"\'<>,.?/"
-                                "\nYour password must also contain at least one number, one uppercaser letter, and one lowercase letter"
+                                "\nYour password must also contain at least one number, one uppercaser letter, and one lowercase letter."
                                 "\nPress any key to try again...")
                             getch()
                             continue
@@ -219,23 +221,29 @@ def forgot_update_password():
                     print("\nPassword has been updated!")
 
                 else:
-                    print('\nThe code entered does not match.')
+                    print('\nThe code entered does not match!')
 
             else:
-                print(f"\nThe email {email} is invalid")
+                print(f"\nThe email {email} is invalid!")
 
             print("Press any key to go back...")
             getch()
             clear()
             break
 
+        except socket.gaierror:
+            print("\nConnection error. Please check your internet connection.")
+            print("Press any key to try again...")
+            getch()
+            clear()
         except Exception:
-            print("\nInvalid Input.")
+            print("\nInvalid input.")
             print("Press any key to try again...")
             getch()
             clear()
 
-#todo need to figure out how to go to settings if email is left blank (or if its invalid)
+
+
 def update_master_password(id):
     while True:
         try:
@@ -243,13 +251,13 @@ def update_master_password(id):
             print("--------------Reset Password------------------\n[Enter '0' if you wish to go back to the Settings screen]")
             print("\n**Verification is needed in order to reset your password**")
             print("\nPlease enter the email associated with your account:")
-            email = input("Email: ")
+            email = input("\nEmail: ")
 
             if email == "0":
                 return '0'
 
             if email == "" or email.isspace():
-                print("\nEmail cannot be blank.")
+                print("\nEmail cannot be empty.")
                 print("Press any key to go back...")
                 getch()
                 clear()
@@ -264,17 +272,17 @@ def update_master_password(id):
             email = validateEmail(email)
 
             if email == 1:
-                print("\nEmail must be at least 6 characters long\nPress any key to try again...")
+                print("\nEmail must be at least 6 characters long.\nPress any key to try again...")
                 getch()
                 continue
 
             if email == 2:
-                print("\nEmail must be less than 35 characters long\nPress any key to try again...")
+                print("\nEmail must be less than 35 characters long.\nPress any key to try again...")
                 getch()
                 continue
 
             if email == 3:
-                print("\nEmail must contain letters, the '@' symbol, and a period (.)"
+                print("\nEmail must contain letters, the '@' symbol, and a period (.)."
                       "\nPress any key to try again...")
                 getch()
                 continue
@@ -290,14 +298,14 @@ def update_master_password(id):
                         clear()
                         print("--------------Reset Password------------------\n[Enter '0' if you wish to go back to the Settings screen]")
                         print("\nPlease enter the code that was just sent to the email:")
-                        answer = input("Code: ")
+                        answer = input("\nCode: ")
                         answer = noleadingspace(answer)
 
                         if answer == '0':
                             return '0'
 
                         if answer == "" or answer.isspace():
-                            print("\nCode cannot be blank")
+                            print("\nCode cannot be empty.")
                             print("Press any key to try again...")
                             getch()
                             clear()
@@ -307,7 +315,7 @@ def update_master_password(id):
 
                         answer = validateRecordPass(answer)
                         if answer == 2:
-                            print("\nCode must be less than 35 characters long\nPress any key to try again...")
+                            print("\nCode must be less than 35 characters long.\nPress any key to try again...")
                             getch()
                             continue
 
@@ -326,13 +334,16 @@ def update_master_password(id):
                             clear()
                             print("--------------Reset Password------------------\n[Enter '0' if you wish to go back to the Settings screen]")
                             print("\nEmail verified! Please enter a new password:")
-                            inputPass = input("New Password: ")
+                            #inputPass = input("New Password: ")
+                            inputPass = hidePassword()
 
                             if inputPass == '0':
+                                print("\nPassword reset cancelled!\nPress any key to go back...")
+                                getch()
                                 return '0'
 
                             if inputPass == "" or inputPass.isspace():
-                                print("\nPassword cannot be empty\nPress any key to try again...")
+                                print("\nPassword cannot be empty.\nPress any key to try again...")
                                 getch()
                                 continue
 
@@ -346,12 +357,12 @@ def update_master_password(id):
                             validatePass = validatePassword(inputPass)
 
                             if validatePass == 1:
-                                print("\nPassword must be at least 8 characters long\nPress any key to try again...")
+                                print("\nPassword must be at least 8 characters long.\nPress any key to try again...")
                                 getch()
                                 continue
 
                             elif validatePass == 2:
-                                print("\nPassword must be less than 20 characters long\nPress any key to try again...")
+                                print("\nPassword must be less than 35 characters long.\nPress any key to try again...")
                                 getch()
                                 continue
 
@@ -395,63 +406,31 @@ def update_master_password(id):
 
 
                     else:
-                        print('\nThe code entered does not match.')
+                        print('\nThe code entered does not match. The account could not be verified!')
 
                 else:
-                    print(f"\nThe {email} is not valid")
+                    print(f"\nThe {email} is not valid!")
 
             else:
-                print(f"\nThe {email} is not valid")
+                print(f"\nThe {email} is not valid!")
 
             print("Press any key to go back...")
             getch()
             clear()
             break
 
-        except Exception:
-            print("\nInvalid Input.")
+
+        except socket.gaierror:
+            print("\nConnection error. Please check your internet connection.")
             print("Press any key to try again...")
             getch()
             clear()
 
-
-
-#
-# def changeMasterEmail(id):
-#     print("--------------Change Account Email------------------")
-#     email = input("\nPlease enter the email associated with your account: ")
-#     if verifyEmail(email):
-#         idOfEnteredEmail = retrieveIDByEmail(email)
-#         if id == str (idOfEnteredEmail):
-#             #generate the code and email it to user
-#             code = generate_password()
-#             sendEmail(email, code)
-#             print("Please enter the code that was just sent to the email: " + email)
-#             answer = input("Code :")
-#             if code == answer:
-#                     hashEmail = hashlib.pbkdf2_hmac('sha256', email.encode("utf-8"), b'&%$#f^',182).hex()  # todo implement random salt test
-#                     clear()
-#                     print("--------------Change Account Email------------------")
-#
-#                     print("\nCode verified. Please enter your new email: ")
-#                     inputEmail = input("New Email: ")
-#                     newEmail = hashlib.pbkdf2_hmac('sha256', inputEmail.encode("utf-8"), b'&%$#f^',
-#                                                     182).hex()
-#                     #update password in acc databae
-#                     updateAcctPass('accdatabase', hashEmail, newEmail, False)
-#
-#                     print("\nEmail has been updated to " + inputEmail)
-#                     if id is not None:
-#                         update_master_email(inputEmail, id)
-#                         return False
-#             else:
-#                 print('\nCode does not match')
-#         else:
-#             print(f"\nThe {email} email is not valid.")
-#
-#     else:
-#         print(f"\nThe {email} email is not valid.")
-
+        except Exception as e:
+            print("\nInvalid Input.")
+            print("Press any key to try again...")
+            getch()
+            clear()
 
 
 def changeMasterEmail(id):
@@ -463,10 +442,10 @@ def changeMasterEmail(id):
             email = input("\nPlease enter the email associated with your account: ")
 
             if email == '0':
-                return
+                return '0'
 
             if email == "" or email.isspace():
-                print("\nEmail cannot be blank.")
+                print("\nEmail cannot be empty!")
                 print("Press any key to try again...")
                 getch()
                 clear()
@@ -481,17 +460,17 @@ def changeMasterEmail(id):
             email = validateEmail(email)
 
             if email == 1:
-                print("\nEmail must be at least 6 characters long\nPress any key to try again...")
+                print("\nEmail must be at least 6 characters long.\nPress any key to try again...")
                 getch()
                 continue
 
             if email == 2:
-                print("\nEmail must be less than 35 characters long\nPress any key to try again...")
+                print("\nEmail must be less than 35 characters long.\nPress any key to try again...")
                 getch()
                 continue
 
             if email == 3:
-                print("\nEmail must contain letters, the '@' symbol, and a period (.)"
+                print("\nEmail must contain letters, the '@' symbol, and a period (.)."
                       "\nPress any key to try again...")
                 getch()
                 continue
@@ -506,13 +485,14 @@ def changeMasterEmail(id):
                         clear()
                         print("--------------Change Account Email------------------\n[Enter '0' if you wish to go back to the Settings screen]")
                         print("\nPlease enter the code that was just sent to the email: " + email)
-                        answer = input("Code :")
+                        answer = input("\nCode :")
+                        answer = noleadingspace(answer)
 
                         if answer == '0':
                             return '0'
 
                         if answer == "" or answer.isspace():
-                            print("\nCode cannot be blank")
+                            print("\nCode cannot be empty!")
                             print("Press any key to try again...")
                             getch()
                             clear()
@@ -520,7 +500,7 @@ def changeMasterEmail(id):
 
                         answer = validateRecordPass(answer)
                         if answer == 2:
-                            print("\nCode must be less than 35 characters long\nPress any key to try again...")
+                            print("\nCode must be less than 35 characters long.\nPress any key to try again...")
                             getch()
                             continue
                         break
@@ -530,49 +510,52 @@ def changeMasterEmail(id):
 
                     if code == answer:
                             hashEmail = hashlib.pbkdf2_hmac('sha256', email.encode("utf-8"), b'&%$#f^',182).hex()  # todo implement random salt test
-                            clear()
-                            print("--------------Change Account Email------------------\n[Enter '0' if you wish to go back to the Settings screen]")
-                            print("\nCode verified! Please enter your new email: ")
-                            inputEmail = input("New Email: ")
-
-                            if inputEmail == '0':
-                                return '0'
-
-                            if inputEmail == "" or inputEmail.isspace():
-                                print("\nEmail cannot be empty\nPress any key to try again...")
-                                getch()
-                                continue
-
-                            if inputEmail.isnumeric():
-                                print("\nEmail cannot be composed of only numbers.\nPress any key to try again...")
-                                getch()
+                            while True:
                                 clear()
-                                continue
+                                print("--------------Change Account Email------------------\n[Enter '0' if you wish to go back to the Settings screen]")
+                                print("\nCode verified! Please enter your new email: ")
+                                inputEmail = input("\nNew Email: ")
 
-                            validatePass = validatePassword(inputEmail)
+                                while checkDuplicateEmail(inputEmail):
+                                    inputEmail = input("\nEmail Taken. Please enter another email for your account: ")
 
-                            if validatePass == 1:
-                                print("\nPassword must be at least 8 characters long\nPress any key to try again...")
-                                getch()
-                                continue
+                                if inputEmail == '0':
+                                    print("\nEmail reset has been cancelled!\nPress any key to go back...")
+                                    getch()
+                                    return '0'
 
-                            elif validatePass == 2:
-                                print("\nPassword must be less than 20 characters long\nPress any key to try again...")
-                                getch()
-                                continue
+                                if inputEmail == "" or inputEmail.isspace():
+                                    print("\nEmail cannot be empty.\nPress any key to try again...")
+                                    getch()
+                                    continue
 
-                            elif validatePass == 3:
-                                print(
-                                    "\nYour password must contain at least one of the following symbols: ~!@#$%^&*_-+='|\(){}[]:;\"\'<>,.?/"
-                                    "\nYour password must also contain at least one number, one uppercaser letter, and one lowercase letter"
-                                    "\nPress any key to try again...")
-                                getch()
-                                continue
+                                if inputEmail.isnumeric():
+                                    print("\nEmail cannot be composed of only numbers.\nPress any key to try again...")
+                                    getch()
+                                    clear()
+                                    continue
 
-
-
+                                email = validateEmail(inputEmail)
 
 
+
+                                if email == 1:
+                                    print("\nEmail must be at least 6 characters long.\nPress any key to try again...")
+                                    getch()
+                                    continue
+
+                                if email == 2:
+                                    print("\nEmail must be less than 35 characters long.\nPress any key to try again...")
+                                    getch()
+                                    continue
+
+                                if email == 3:
+                                    print("\nEmail must contain letters, the '@' symbol, and a period (.)."
+                                          "\nPress any key to try again...")
+                                    getch()
+                                    continue
+
+                                break
 
 
                             newEmail = hashlib.pbkdf2_hmac('sha256', inputEmail.encode("utf-8"), b'&%$#f^',
@@ -585,12 +568,30 @@ def changeMasterEmail(id):
                                 update_master_email(inputEmail, id)
                                 return False
                     else:
-                        print('\nCode does not match')
+                        print('\nThe entered code does not match. The account could not be verified!')
+                        print("Press any key to go back...")
+                        getch()
+                        clear()
+                        return
                 else:
-                    print(f"\nThe {email} email is not valid.")
+                    print(f"\nThe {email} email is not valid!")
+                    print("Press any key to try again...")
+                    getch()
+                    clear()
+                    continue
 
             else:
-                print(f"\nThe {email} email is not valid.")
+                print(f"\nThe {email} email is not valid!")
+                print("Press any key to try again...")
+                getch()
+                clear()
+                continue
+
+    except socket.gaierror:
+        print("\nConnection error. Please check your internet connection.")
+        print("Press any key to try again...")
+        getch()
+        clear()
 
     except Exception:
         print("\nInvalid Input.")
@@ -679,7 +680,7 @@ def usernameRecovery():
                 return 0
 
             if email == "" or email.isspace():
-                print("\nEmail cannot be blank.")
+                print("\nEmail cannot be empty!")
                 print("Press any key to go back...")
                 getch()
                 clear()
@@ -694,17 +695,17 @@ def usernameRecovery():
             email = validateEmail(email)
 
             if email == 1:
-                print("\nEmail must be at least 6 characters long\nPress any key to try again...")
+                print("\nEmail must be at least 6 characters long.\nPress any key to try again...")
                 getch()
                 continue
 
             if email == 2:
-                print("\nEmail must be less than 35 characters long\nPress any key to try again...")
+                print("\nEmail must be less than 35 characters long.\nPress any key to try again...")
                 getch()
                 continue
 
             if email == 3:
-                print("\nEmail must contain letters, the '@' symbol, and a period (.)"
+                print("\nEmail must contain letters, the '@' symbol, and a period (.)."
                       "\nPress any key to try again...")
                 getch()
                 continue
@@ -712,43 +713,25 @@ def usernameRecovery():
 
             if verifyEmail(email):
                 retrieveUsername(email)
-                print("\nUsername has been sent to the Email associated with the account")
+                print("\nIf account exists, an email will be sent to the entered email. Please check your email.")
             else:
-                print(f"\nAn email has been sent to the account associated with the {email} email ")
+                time.sleep(2)
+                print(f"\nIf account exists, an email will be sent to the entered email. Please check your email.")
 
             print("Press any key to go back...")
             getch()
             clear()
             break
 
+
+        except socket.gaierror:
+            print("\nConnection error. Please check your internet connection.")
+            print("Press any key to try again...")
+            getch()
+            clear()
+
         except Exception:
             print("\nInvalid Input.")
             print("Press any key to try again...")
             getch()
             clear()
-
-# def idRecovery():
-#     while True:
-#         try:
-#             clear()
-#             print("--------------Id Recovery------------------")
-#             print("\nPlease enter the email associated with your account:\n")
-#             email = input("Email: ")
-#
-#
-#             if verifyEmail(email):
-#                 retrieveID(email)
-#                 print("\nID has been sent to the Email associated with the account.")
-#             else:
-#                 print(f"\nThe {email} email was not found.")
-#
-#             print("Press any key to go back...")
-#             getch()
-#             clear()
-#             break
-#
-#         except Exception:
-#             print("\nInvalid Input.")
-#             print("Press any key to try again...")
-#             getch()
-#             clear()

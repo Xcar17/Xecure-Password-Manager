@@ -19,6 +19,7 @@ from passwordRecovery import retrieveIDByName
 from input_val import validateRecordName, validateRecordPasswordAndEmail, validateEmail, validateRecordPass
 import threading
 import time
+from hidePassword import hideRecPassword
 
 #Function uses multithreading to flush the clipboard in the background while the user uses the application
 def flushPasswordThread():
@@ -74,7 +75,7 @@ def dashBoard(currentUser):
 
                 if end == 1:  # If one the user will be logged out
                     clear()
-                    print("\nThank you for using Xecure Password Manager. \nPress any key to logout...")
+                    print("\nThank you for using Xecure Password Manager\nPress any key to logout...")
                     getch()
                     usrtitle = ("title Xecure Password Manager")
                     os.system(usrtitle)
@@ -85,7 +86,7 @@ def dashBoard(currentUser):
                     clear()
 
                 else:  # Invalid inputs
-                    print("\nPlease enter a number between 1 and 2.")
+                    print("\nPlease enter a number between 1 and 2")
                     print("\nPress any key to try again...")
                     getch()
                     clear()
@@ -95,7 +96,7 @@ def dashBoard(currentUser):
                 myExit()
 
             if menuSelection > 8 or menuSelection < 1:  # Input Validation
-                print("\nPlease enter a number between 1 and 8.")
+                print("\nPlease enter a number between 1 and 8")
                 print("\nPress any key to try again...")
                 getch()
                 clear()
@@ -105,7 +106,7 @@ def dashBoard(currentUser):
             # fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
             # print(exc_type, fname, exc_tb.tb_lineno)
 
-            print("\nPlease enter a number between 1 and 8.")
+            print("\nPlease enter a number between 1 and 8")
             print("Press any key to try again...")
             getch()
             clear()
@@ -117,21 +118,21 @@ def getRecord(userId):
         try:
             clear()
             print("--------------Retrieve Record------------------\n[Enter '0' if you wish to go back to the previous screen]")  # Asks user to name the record
-            print("\nEnter the name of record you wish to retrieve. ")
+            print("\nEnter the name of record you wish to retrieve ")
             recordName = input("\nRecord name: ")
 
             if recordName == '0':
                 return '0'
 
             if recordName.isspace() or recordName == "":
-                print("\nRecord name cannot be empty.")
+                print("\nRecord name cannot be empty")
                 print("Press any key to try again...")
                 getch()
                 clear()
                 continue
 
             if recordName.isnumeric():
-                print("\nRecord name cannot be composed of only numbers.\nPress any key to try again...")
+                print("\nRecord name cannot be composed of only numbers\nPress any key to try again...")
                 getch()
                 continue
 
@@ -155,14 +156,14 @@ def getRecord(userId):
                 continue
 
             elif recordName.isnumeric():
-                print("\nRecord name cannot be composed of only numbers.")
+                print("\nRecord name cannot be composed of only numbers")
                 print("Press any key to try again...")
                 getch()
                 clear()
                 continue
 
             else:
-                print("Program will search for record.\n")
+                print("Program will search for record\n")
 
                 userId1 = str(userId)
                 recordname1 = recordName
@@ -171,7 +172,7 @@ def getRecord(userId):
                 if recordname1 == test[2]:
 
                     # result = get_user_record(userId, recordName)
-                    print(recordName + " Record found.\n")
+                    print(recordName + " Record found!\n")
                     print(recordName + " Account Email: " + test[3])
                     print(recordName + " Account Username: " + test[4])
                     print(recordName + " Account Password: " + test[5])
@@ -186,7 +187,7 @@ def getRecord(userId):
                     clear()
                     break  # breaks to go back to dashboard
                 else:
-                    print( recordName + " record not found.")
+                    print( recordName + " record not found")
                     print("Press any key to try again...")
                     getch()
                     clear()
@@ -206,21 +207,21 @@ def addRecord(userId):
             while True:
                 clear()
                 print("--------------Add Record------------------\n[Enter '0' if you wish to go back to the dashboard]")  # Asks for name of record to retrieve
-                print("\nEnter the name of the record (You will use this name to retrieve the record).")
+                print("\nEnter the name of the record (You will use this name to retrieve the record)")
                 recordName = input("\nRecord Name: ")
 
                 if recordName == '0':
                     return '0'
 
                 if recordName.isspace() or recordName == "":
-                    print("\nRecord name cannot be empty.")
+                    print("\nRecord name cannot be empty")
                     print("Press any key to try again...")
                     getch()
                     clear()
                     continue
 
                 if recordName.isnumeric():
-                    print("\nRecord name cannot be composed of only numbers.\nPress any key to try again...")
+                    print("\nRecord name cannot be composed of only numbers\nPress any key to try again...")
                     getch()
                     continue
 
@@ -260,14 +261,14 @@ def addRecord(userId):
                 clear()
                 print("--------------Add Record------------------\n[Enter '0' if you wish to go back to the dashboard]")  # Asks for name of record to retrieve
                 print("\nEnter the Email for your " + recordName + " account. (Leave blank and press enter if no email linked to the account)")
-                recordEmail = input("Account Email: ")
+                recordEmail = input("\nAccount Email: ")
 
                 if recordEmail == '0':
                     return '0'
 
 
                 if recordEmail.isnumeric():
-                    print("\nRecord email cannot be composed of only numbers.\nPress any key to try again...")
+                    print("\nRecord email cannot be composed of only numbers\nPress any key to try again...")
                     getch()
                     continue
 
@@ -302,14 +303,14 @@ def addRecord(userId):
                 clear()
                 print("--------------Add Record------------------\n[Enter '0' if you wish to go back to the dashboard]")  # Asks for name of record to retrieve
                 print("\nEnter the Username for your " + recordName + " account. (Leave blank and press enter if no username linked to the account)")
-                recordUser = input("Account Username: ")
+                recordUser = input("\nAccount Username: ")
 
                 if recordUser == '0':
                     return '0'
 
 
                 if recordUser.isnumeric():
-                    print("\nRecord username cannot be composed of only numbers.\nPress any key to try again...")
+                    print("\nRecord username cannot be composed of only numbers\nPress any key to try again...")
                     getch()
                     continue
 
@@ -325,7 +326,7 @@ def addRecord(userId):
                     continue
 
                 if recordUser == 3:
-                    print("\nRecord username cannot be composed of only symbols and/or numbers.\nPress any key to try again...")
+                    print("\nRecord username cannot be composed of only symbols and/or numbers\nPress any key to try again...")
                     getch()
                     continue
 
@@ -346,12 +347,12 @@ def addRecord(userId):
                     return '0'
 
                 if menuSelection != "1" and menuSelection != "2" and menuSelection != "":
-                    print("\nPlease select a number between 0 and 2.\nPress any key to try again...")
+                    print("\nPlease select a number between 0 and 2\nPress any key to try again...")
                     getch()
                     clear()
 
                 if menuSelection == "":
-                    print("\nSelection cannot be blank.\nPress any key to try again...")
+                    print("\nSelection cannot be blank\nPress any key to try again...")
                     getch()
                     clear()
 
@@ -381,16 +382,16 @@ def addRecord(userId):
                             moveOn = True
 
                         elif passSelect == "":
-                            print("\nSelection cannot be blank.\nPress any key to try again...")
+                            print("\nSelection cannot be blank\nPress any key to try again...")
                             getch()
                             clear()
                         elif passSelect != '1' or passSelect != '2':
-                            print("\nPlease select a number between 1 and 2.\nPress any key to try again...")
+                            print("\nPlease select a number between 1 and 2\nPress any key to try again...")
                             getch()
                             clear()
 
                         else:
-                            print("\nInvalid Input.\nPress any key to try again...")
+                            print("\nInvalid Input\nPress any key to try again...")
                             getch()
                             clear()
 
@@ -399,15 +400,15 @@ def addRecord(userId):
                 if menuSelection == '2':
                     while True:
                         clear()
-                        print("--------------Add Record------------------\n[Enter '0' if you wish to go back to the dashboard]")
-                        print("\nEnter the password for your " + recordName + " account:\n")
-                        recordpassword = input("Acount Password: (has to be fixed to only display ****) ")
+                        print("--------------Add Record------------------\n[Enter '0' if you wish to go back to the dashboard]\n")
+                        print("Please enter the following: ")
+                        recordpassword = hideRecPassword()
 
                         if recordpassword == '0':
                             return '0'
 
                         if recordpassword.isspace() or recordpassword == "":
-                            print("\nPassword cannot be empty.")
+                            print("\nPassword cannot be empty")
                             print("Press any key to try again...")
                             getch()
                             continue
@@ -436,7 +437,7 @@ def addRecord(userId):
             break
 
         except Exception:
-            print("\nSomething went wrong. Please try again.")
+            print("\nSomething went wrong. Please try again")
             print("Press any key to try again...")
             getch()
             clear()
@@ -453,7 +454,7 @@ def updateRecord(userId):
                     while True:
                         clear()
                         print("--------------Update Record------------------\n[Enter '0' if you wish to go back to the previous screen]")  # User needs to name the record they wish to update
-                        print("\nEnter the name of the record you want to update.")
+                        print("\nEnter the name of the record you want to update")
                         oldRecordName = input("\nRecord name: ")
 
                         if oldRecordName == '0':
@@ -499,7 +500,7 @@ def updateRecord(userId):
                             break
 
                         else:
-                            print("\nRecord not found...")
+                            print("\nRecord not found!")
                             print("Press any key to try again...")
                             getch()
                             clear()
@@ -662,7 +663,7 @@ def updateRecord(userId):
                                         continue
 
                                     if newRecordUserName == 3:
-                                        print("\nRecord username cannot be composed of only symbols and/or numbers.\nPress any key to try again...")
+                                        print("\nRecord username cannot be composed of only symbols and/or numbers\nPress any key to try again...")
                                         getch()
                                         continue
 
@@ -676,7 +677,9 @@ def updateRecord(userId):
                                 while True:
                                     clear()
                                     print("--------------Update Record Password------------------\n[Enter '0' if you wish to go back to the previous screen]\n")
-                                    newRecordPassword = input("Enter the new record password: ")
+                                    #newRecordPassword = input("Enter the new record password: ")
+                                    print("Enter the new record password:")
+                                    newRecordPassword = hideRecPassword()
 
                                     if newRecordPassword == '0':
                                         break
