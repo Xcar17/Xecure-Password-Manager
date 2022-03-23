@@ -52,13 +52,13 @@ def settings(userId):
                 break
 
             if menuSelection > 4 or menuSelection < 0:
-                print("\nPlease enter a number between 0 and 4")
+                print("\nPlease enter a number between 0 and 4.")
                 print("Press any key to try again...")
                 getch()
                 clear()
 
         except Exception:
-            print("\nInvalid Input")
+            print("\nInvalid Input. Please enter a number between 0 and 4.")
             print("Press any key to try again...")
             getch()
             clear()
@@ -88,13 +88,13 @@ def deleteRecord(userId):
                     return '0'
 
                 if recordSelected.isspace() or recordSelected == "":
-                    print("\nRecord name cannot be empty\nPress any key to continue...")
+                    print("\nRecord name cannot be empty.\nPress any key to continue...")
                     getch()
                     clear()
                     continue
 
                 if recordSelected.isnumeric():
-                    print("\nRecord name cannot be composed of only numbers\nPress any key to continue...")
+                    print("\nRecord name cannot be composed of only numbers.\nPress any key to continue...")
                     getch()
                     clear()
                     continue
@@ -102,17 +102,17 @@ def deleteRecord(userId):
                 recordSelected = validateRecordName(recordSelected)
 
                 if recordSelected == '1':
-                    print("\nRecord name must be at least 3 characters long\nPress any key to try again...")
+                    print("\nRecord name must be at least 3 characters long.\nPress any key to try again...")
                     getch()
                     continue
 
                 if recordSelected == '2':
-                    print("\nRecord name must be less than 35 characters long\nPress any key to try again...")
+                    print("\nRecord name must be less than 35 characters long.\nPress any key to try again...")
                     getch()
                     continue
 
                 if recordSelected == '3':
-                    print("\nRecord names must contain letters. Numbers and special characters are optional"
+                    print("\nRecord names must contain letters. Numbers and special characters are optional."
                           "\nSpecial characters allowed: Underscores (_), spaces ( ), and periods (.)"
                           "\nPress any key to try again...")
                     getch()
@@ -142,11 +142,11 @@ def deleteRecord(userId):
 
                             elif confirmation == "2":#Record will not be deleted if 2
                                 ready = 2#Flag set to exit function
-                                print("\nRecord was not deleted")
+                                print("\nRecord was not deleted!")
                                 break
 
                             else:#Invalid input
-                                print("\nInvalid Input\nPress any key to try again...")
+                                print("\nInvalid Input. Please enter a number between 1 and 2.\nPress any key to try again...")
                                 getch()
                                 clear()
 
@@ -163,7 +163,7 @@ def deleteRecord(userId):
                 break
 
         except Exception:
-            print("\nInvalid Input")
+            print("\nInvalid Input.")
             print("Press any key to try again...")
             getch()
             clear()
@@ -188,7 +188,7 @@ def deleteAllRecords(userId):
                 confirmation = input("\nSelection: ")
 
                 if confirmation == "" or confirmation.isspace():
-                    print("\nSelection cannot be blank\nPress any key to try again...")
+                    print("\nSelection cannot be blank.\nPress any key to try again...")
                     getch()
                     continue
 
@@ -199,17 +199,17 @@ def deleteAllRecords(userId):
                     return
 
                 elif confirmation == "2":#If no then records will not be deleted
-                    print("\nNo records erased\nPress any key to go back to Settings...")
+                    print("\nNo records erased!\nPress any key to go back to Settings...")
                     getch()
                     return
 
                 else:#if invalid input
-                    print("\nInvalid Input! Please select a number between 1-2\nPress any key to try again...")
+                    print("\nInvalid Input. Please enter a number between 1 and 2.\nPress any key to try again...")
                     getch()
                     continue
 
     except Exception:
-        print("\nInvalid Input")
+        print("\nInvalid Input.")
         print("Press any key to try again...")
         getch()
         clear()
@@ -248,7 +248,7 @@ def changeEmail(userId):
 
 
         except Exception:
-            print("\nInvalid Input")
+            print("\nInvalid Input.")
             print("Press any key to try again...")
             getch()
             clear()

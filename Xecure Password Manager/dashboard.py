@@ -67,37 +67,20 @@ def dashBoard(currentUser):
                 settings(usrId)
 
             if menuSelection == 7:
-                # This option will let the user sign out and go back to the login screen
-                print("\nAre you sure you want to logout?\n")
-                print("[1] Yes")
-                print("[2] No\n")
-                end = int(input("Selection: "))
-
-                if end == 1:  # If one the user will be logged out
-                    clear()
-                    print("\nThank you for using Xecure Password Manager\nPress any key to logout...")
-                    getch()
-                    usrtitle = ("title Xecure Password Manager")
-                    os.system(usrtitle)
-                    clear()
+                select = logout()
+                if select == True:
                     break
+                if select == False:
+                    continue
 
-                elif end == 2:  # If two the app will go back to the dashboard
-                    clear()
-
-                else:  # Invalid inputs
-                    print("\nPlease enter a number between 1 and 2")
-                    print("\nPress any key to try again...")
-                    getch()
-                    clear()
 
             if menuSelection == 8:  # This will close the application
                 clear()
                 myExit()
 
             if menuSelection > 8 or menuSelection < 1:  # Input Validation
-                print("\nPlease enter a number between 1 and 8")
-                print("\nPress any key to try again...")
+                print("\nPlease enter a number between 1 and 8.")
+                print("Press any key to try again...")
                 getch()
                 clear()
 
@@ -106,7 +89,7 @@ def dashBoard(currentUser):
             # fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
             # print(exc_type, fname, exc_tb.tb_lineno)
 
-            print("\nPlease enter a number between 1 and 8")
+            print("\nPlease enter a number between 1 and 8.")
             print("Press any key to try again...")
             getch()
             clear()
@@ -118,52 +101,61 @@ def getRecord(userId):
         try:
             clear()
             print("--------------Retrieve Record------------------\n[Enter '0' if you wish to go back to the previous screen]")  # Asks user to name the record
-            print("\nEnter the name of record you wish to retrieve ")
+
+            if checkIfNoRecords(userId) == 0:
+                print("\n**No records in database**")
+                print("\nPress any key to go back to the Dashboard...")
+                getch()
+                clear()
+                return
+
+
+            print("\nEnter the name of record you wish to retrieve. ")
             recordName = input("\nRecord name: ")
 
             if recordName == '0':
                 return '0'
 
             if recordName.isspace() or recordName == "":
-                print("\nRecord name cannot be empty")
+                print("\nRecord name cannot be empty.")
                 print("Press any key to try again...")
                 getch()
                 clear()
                 continue
 
             if recordName.isnumeric():
-                print("\nRecord name cannot be composed of only numbers\nPress any key to try again...")
+                print("\nRecord name cannot be composed of only numbers.\nPress any key to try again...")
                 getch()
                 continue
 
             recordName = validateRecordName(recordName)
 
             if recordName == '1':
-                print("\nRecord name must be at least 3 characters long\nPress any key to try again...")
+                print("\nRecord name must be at least 3 characters long.\nPress any key to try again...")
                 getch()
                 continue
 
             if recordName == '2':
-                print("\nRecord name must be less than 35 characters long\nPress any key to try again...")
+                print("\nRecord name must be less than 35 characters long.\nPress any key to try again...")
                 getch()
                 continue
 
             if recordName == '3':
-                print("\nRecord names must contain letters. Numbers and special characters are optional"
+                print("\nRecord names must contain letters. Numbers and special characters are optional."
                     "\nSpecial characters allowed: Underscores (_), spaces ( ), and periods (.)"  
                     "\nPress any key to try again...")
                 getch()
                 continue
 
             elif recordName.isnumeric():
-                print("\nRecord name cannot be composed of only numbers")
+                print("\nRecord name cannot be composed of only numbers.")
                 print("Press any key to try again...")
                 getch()
                 clear()
                 continue
 
             else:
-                print("Program will search for record\n")
+                print("Program will search for record...\n")
 
                 userId1 = str(userId)
                 recordname1 = recordName
@@ -187,14 +179,14 @@ def getRecord(userId):
                     clear()
                     break  # breaks to go back to dashboard
                 else:
-                    print( recordName + " record not found")
+                    print( recordName + " record not found!")
                     print("Press any key to try again...")
                     getch()
                     clear()
                     continue
 
         except Exception:
-            print("\nInvalid Input")
+            print("\nInvalid Input.")
             print("Press any key to try again...")
             getch()
             clear()
@@ -207,38 +199,38 @@ def addRecord(userId):
             while True:
                 clear()
                 print("--------------Add Record------------------\n[Enter '0' if you wish to go back to the dashboard]")  # Asks for name of record to retrieve
-                print("\nEnter the name of the record (You will use this name to retrieve the record)")
+                print("\nEnter the name of the record (You will use this name to retrieve the record).")
                 recordName = input("\nRecord Name: ")
 
                 if recordName == '0':
                     return '0'
 
                 if recordName.isspace() or recordName == "":
-                    print("\nRecord name cannot be empty")
+                    print("\nRecord name cannot be empty.")
                     print("Press any key to try again...")
                     getch()
                     clear()
                     continue
 
                 if recordName.isnumeric():
-                    print("\nRecord name cannot be composed of only numbers\nPress any key to try again...")
+                    print("\nRecord name cannot be composed of only numbers.\nPress any key to try again...")
                     getch()
                     continue
 
                 recordName = validateRecordName(recordName)
 
                 if recordName == '1':
-                    print("\nRecord name must be at least 3 characters long\nPress any key to try again...")
+                    print("\nRecord name must be at least 3 characters long.\nPress any key to try again...")
                     getch()
                     continue
 
                 if recordName == '2':
-                    print("\nRecord name must be less than 35 characters long\nPress any key to try again...")
+                    print("\nRecord name must be less than 35 characters long.\nPress any key to try again...")
                     getch()
                     continue
 
                 if recordName == '3':
-                    print("\nRecord names must contain letters. Numbers and special characters are optional"
+                    print("\nRecord names must contain letters. Numbers and special characters are optional."
                           "\nSpecial characters allowed: Underscores (_), spaces ( ), and periods (.)"
                           "\nPress any key to try again...")
                     getch()
@@ -246,7 +238,7 @@ def addRecord(userId):
 
 
                 if checkDuplicateRecName(userId, recordName):
-                    print("\nRecord name taken, please choose another ")
+                    print("\nRecord name taken, please choose another one.")
                     print("Press any key to try again...")
                     getch()
                     clear()
@@ -268,7 +260,7 @@ def addRecord(userId):
 
 
                 if recordEmail.isnumeric():
-                    print("\nRecord email cannot be composed of only numbers\nPress any key to try again...")
+                    print("\nRecord email cannot be composed of only numbers.\nPress any key to try again...")
                     getch()
                     continue
 
@@ -279,18 +271,18 @@ def addRecord(userId):
 
                 if recordEmail == 1:
                     print(
-                        "\nRecord email must be at least 6 characters long\nPress any key to try again...")
+                        "\nRecord email must be at least 6 characters long.\nPress any key to try again...")
                     getch()
                     continue
 
                 if recordEmail == 2:
                     print(
-                        "\nRecord email must be less than 35 characters long\nPress any key to try again...")
+                        "\nRecord email must be less than 35 characters long.\nPress any key to try again...")
                     getch()
                     continue
 
                 if recordEmail == 3:
-                    print("\nRecord email must contain letters, the '@' symbol, and a period (.)"
+                    print("\nRecord email must contain letters, the '@' symbol, and a period (.)."
                           "\nPress any key to try again...")
                     getch()
                     continue
@@ -310,7 +302,7 @@ def addRecord(userId):
 
 
                 if recordUser.isnumeric():
-                    print("\nRecord username cannot be composed of only numbers\nPress any key to try again...")
+                    print("\nRecord username cannot be composed of only numbers.\nPress any key to try again...")
                     getch()
                     continue
 
@@ -321,12 +313,12 @@ def addRecord(userId):
 
 
                 if recordUser == 2:
-                    print("\nRecord username must be less than 35 characters long\nPress any key to try again...")
+                    print("\nRecord username must be less than 35 characters long.\nPress any key to try again...")
                     getch()
                     continue
 
                 if recordUser == 3:
-                    print("\nRecord username cannot be composed of only symbols and/or numbers\nPress any key to try again...")
+                    print("\nRecord username cannot be composed of only symbols and/or numbers.\nPress any key to try again...")
                     getch()
                     continue
 
@@ -347,12 +339,12 @@ def addRecord(userId):
                     return '0'
 
                 if menuSelection != "1" and menuSelection != "2" and menuSelection != "":
-                    print("\nPlease select a number between 0 and 2\nPress any key to try again...")
+                    print("\nPlease select a number between 0 and 2.\nPress any key to try again...")
                     getch()
                     clear()
 
                 if menuSelection == "":
-                    print("\nSelection cannot be blank\nPress any key to try again...")
+                    print("\nSelection cannot be empty.\nPress any key to try again...")
                     getch()
                     clear()
 
@@ -382,16 +374,16 @@ def addRecord(userId):
                             moveOn = True
 
                         elif passSelect == "":
-                            print("\nSelection cannot be blank\nPress any key to try again...")
+                            print("\nSelection cannot be empty.\nPress any key to try again...")
                             getch()
                             clear()
                         elif passSelect != '1' or passSelect != '2':
-                            print("\nPlease select a number between 1 and 2\nPress any key to try again...")
+                            print("\nPlease select a number between 1 and 2.\nPress any key to try again...")
                             getch()
                             clear()
 
                         else:
-                            print("\nInvalid Input\nPress any key to try again...")
+                            print("\nInvalid Input.\nPress any key to try again...")
                             getch()
                             clear()
 
@@ -408,7 +400,7 @@ def addRecord(userId):
                             return '0'
 
                         if recordpassword.isspace() or recordpassword == "":
-                            print("\nPassword cannot be empty")
+                            print("\nPassword cannot be empty.")
                             print("Press any key to try again...")
                             getch()
                             continue
@@ -417,7 +409,7 @@ def addRecord(userId):
                         recordpassword = validateRecordPass(recordpassword)
 
                         if recordpassword == 2:
-                            print("\nRecord password must be less than 35 characters long\nPress any key to try again...")
+                            print("\nRecord password must be less than 35 characters long.\nPress any key to try again...")
                             getch()
                             continue
 
@@ -437,7 +429,7 @@ def addRecord(userId):
             break
 
         except Exception:
-            print("\nSomething went wrong. Please try again")
+            print("\nSomething went wrong. Please try again.")
             print("Press any key to try again...")
             getch()
             clear()
@@ -454,6 +446,15 @@ def updateRecord(userId):
                     while True:
                         clear()
                         print("--------------Update Record------------------\n[Enter '0' if you wish to go back to the previous screen]")  # User needs to name the record they wish to update
+
+                        if checkIfNoRecords(userId) == 0:
+                            print("\n**No records in database**")
+                            print("\nPress any key to go back to the Dashboard...")
+                            getch()
+                            clear()
+                            return
+
+
                         print("\nEnter the name of the record you want to update")
                         oldRecordName = input("\nRecord name: ")
 
@@ -461,13 +462,13 @@ def updateRecord(userId):
                             return '0'
 
                         if oldRecordName.isspace() or oldRecordName == "":
-                            print("\nRecord name cannot be empty")
+                            print("\nRecord name cannot be empty.")
                             print("Press any key to try again...")
                             getch()
                             continue
 
                         if oldRecordName.isnumeric():
-                            print("\nRecord name cannot be composed of only numbers")
+                            print("\nRecord name cannot be composed of only numbers.")
                             print("Press any key to try again...")
                             getch()
                             continue
@@ -476,18 +477,18 @@ def updateRecord(userId):
 
 
                         if oldRecordName == '1':
-                            print("\nRecord name must be at least 3 characters long\nPress any key to try again...")
+                            print("\nRecord name must be at least 3 characters long.\nPress any key to try again...")
                             getch()
                             continue
 
                         if oldRecordName == '2':
-                            print("\nRecord name must be less than 35 characters long\nPress any key to try again...")
+                            print("\nRecord name must be less than 35 characters long.\nPress any key to try again...")
                             getch()
                             continue
 
                         if oldRecordName == '3':
-                            print("\nRecord names must contain letters. Numbers and special characters are optional"
-                                  "\nSpecial characters allowed: Underscores (_), spaces ( ), and periods (.)"
+                            print("\nRecord names must contain letters. Numbers and special characters are optional."
+                                  "\nSpecial characters allowed: Underscores (_), spaces ( ), and periods (.)."
                                   "\nPress any key to try again...")
                             getch()
                             continue
@@ -519,7 +520,7 @@ def updateRecord(userId):
 
 
                             if menuSelection > 4 or menuSelection < 0 or menuSelection == "":
-                                print("\nPlease enter a number between 0 and 4")
+                                print("\nPlease enter a number between 0 and 4.")
                                 print("Press any key to try again...")
                                 getch()
                                 clear()
@@ -535,14 +536,14 @@ def updateRecord(userId):
                                         break
 
                                     if newRecordName == "" or newRecordName.isspace():
-                                        print("\nRecord name cannot be blank")
+                                        print("\nRecord name cannot be empty.")
                                         print("Press any key to try again...")
                                         getch()
                                         clear()
                                         continue
 
                                     if newRecordName.isnumeric():
-                                        print("\nRecord name cannot be composed of only numbers")
+                                        print("\nRecord name cannot be composed of only numbers.")
                                         print("Press any key to try again...")
                                         getch()
                                         continue
@@ -551,26 +552,26 @@ def updateRecord(userId):
 
                                     if newRecordName == '1':
                                         print(
-                                            "\nRecord name must be at least 3 characters long\nPress any key to try again...")
+                                            "\nRecord name must be at least 3 characters long.\nPress any key to try again...")
                                         getch()
                                         continue
 
                                     if newRecordName == '2':
                                         print(
-                                            "\nRecord name must be less than 35 characters long\nPress any key to try again...")
+                                            "\nRecord name must be less than 35 characters long.\nPress any key to try again...")
                                         getch()
                                         continue
 
                                     if newRecordName == '3':
                                         print(
-                                            "\nRecord names must contain letters. Numbers and special characters are optional"
-                                            "\nSpecial characters allowed: Underscores (_), spaces ( ), and periods (.)"
+                                            "\nRecord names must contain letters. Numbers and special characters are optional."
+                                            "\nSpecial characters allowed: Underscores (_), spaces ( ), and periods (.)."
                                             "\nPress any key to try again...")
                                         getch()
                                         continue
 
                                     if checkDuplicateRecName(userId, newRecordName):
-                                        print("\nRecord name taken, please choose another ")
+                                        print("\nRecord name taken, please choose another one.")
                                         print("Press any key to try again...")
                                         getch()
                                         clear()
@@ -593,7 +594,7 @@ def updateRecord(userId):
                                         break
 
                                     if newEmail.isnumeric():
-                                        print("\nRecord email cannot be composed of only numbers")
+                                        print("\nRecord email cannot be composed of only numbers.")
                                         print("Press any key to try again...")
                                         getch()
                                         continue
@@ -610,18 +611,18 @@ def updateRecord(userId):
 
                                     if newEmail == 1:
                                         print(
-                                            "\nRecord email must be at least 6 characters long\nPress any key to try again...")
+                                            "\nRecord email must be at least 6 characters long.\nPress any key to try again...")
                                         getch()
                                         continue
 
                                     if newEmail == 2:
                                         print(
-                                            "\nRecord email must be less than 35 characters long\nPress any key to try again...")
+                                            "\nRecord email must be less than 35 characters long.\nPress any key to try again...")
                                         getch()
                                         continue
 
                                     if newEmail == 3:
-                                        print("\nRecord email must contain letters, the '@' symbol, and a period (.)"
+                                        print("\nRecord email must contain letters, the '@' symbol, and a period (.)."
                                             "\nPress any key to try again...")
                                         getch()
                                         continue
@@ -642,7 +643,7 @@ def updateRecord(userId):
                                         break
 
                                     if newRecordUserName.isnumeric():
-                                        print("\nRecord username cannot be composed of only numbers")
+                                        print("\nRecord username cannot be composed of only numbers.")
                                         print("Press any key to try again...")
                                         getch()
                                         continue
@@ -658,12 +659,12 @@ def updateRecord(userId):
                                     newRecordUserName = validateRecordPasswordAndEmail(newRecordUserName)
 
                                     if newRecordUserName == 2:
-                                        print("\nRecord name must be less than 35 characters long\nPress any key to try again...")
+                                        print("\nRecord name must be less than 35 characters long.\nPress any key to try again...")
                                         getch()
                                         continue
 
                                     if newRecordUserName == 3:
-                                        print("\nRecord username cannot be composed of only symbols and/or numbers\nPress any key to try again...")
+                                        print("\nRecord username cannot be composed of only symbols and/or numbers.\nPress any key to try again...")
                                         getch()
                                         continue
 
@@ -685,7 +686,7 @@ def updateRecord(userId):
                                         break
 
                                     if newRecordPassword == "" or newRecordPassword.isspace():
-                                        print("\nRecord password cannot be blank")
+                                        print("\nRecord password cannot be empty.")
                                         print("Press any key to try again...")
                                         getch()
                                         clear()
@@ -695,7 +696,7 @@ def updateRecord(userId):
 
 
                                     if newRecordPassword == 2:
-                                        print("\nRecord password must be less than 35 characters long\nPress any key to try again...")
+                                        print("\nRecord password must be less than 35 characters long.\nPress any key to try again...")
                                         getch()
                                         continue
 
@@ -718,7 +719,7 @@ def updateRecord(userId):
 
 
                         except Exception:
-                            print("\nInvalid input. Please enter a number between 0 and 4\nPress any key to try again...")
+                            print("\nInvalid input. Please enter a number between 0 and 4.\nPress any key to try again...")
                             getch()
                             clear()
 
@@ -770,3 +771,40 @@ def recordNamesOnly(userId, value):
     print("\nPress any key to go back to Dashboard...")
     getch()
     clear()
+
+def logout():
+    # This option will let the user sign out and go back to the login screen
+    while True:
+        try:
+            clear()
+            print("--------------Logout------------------")
+            print("\nAre you sure you want to logout?\n")
+            print("[1] Yes")
+            print("[2] No\n")
+            end = int(input("Selection: "))
+
+
+            if end == 1:  # If one the user will be logged out
+                pyperclip.copy("")
+                print("\nThank you for using Xecure Password Manager!\nPress any key to logout...")
+                getch()
+                usrtitle = ("title Xecure Password Manager")
+                os.system(usrtitle)
+                clear()
+                return True
+
+            elif end == 2:  # If two the app will go back to the dashboard
+                return False
+
+            else:  # Invalid inputs
+                print("\nPlease enter a number between 1 and 2.")
+                print("Press any key to try again...")
+                getch()
+                clear()
+                continue
+
+        except Exception:
+            print("\nInvalid Input! Please enter a number between 1 and 2.")
+            print("Press any key to try again...")
+            getch()
+            clear()
