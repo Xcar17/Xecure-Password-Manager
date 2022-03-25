@@ -252,8 +252,8 @@ def addRecord(userId):
             while True:
                 clear()
                 print("--------------Add Record------------------\n[Enter '0' if you wish to go back to the dashboard]")  # Asks for name of record to retrieve
-                print("\nEnter the Email for your " + recordName + " account. (Leave blank and press enter if no email linked to the account)")
-                recordEmail = input("\nAccount Email: ")
+                print("\nEnter the Email for your " + recordName + " account. (Leave blank and press enter if no email was linked to the account)")
+                recordEmail = input("\nAccount/Record Email: ")
 
                 if recordEmail == '0':
                     return '0'
@@ -294,8 +294,8 @@ def addRecord(userId):
             while True:
                 clear()
                 print("--------------Add Record------------------\n[Enter '0' if you wish to go back to the dashboard]")  # Asks for name of record to retrieve
-                print("\nEnter the Username for your " + recordName + " account. (Leave blank and press enter if no username linked to the account)")
-                recordUser = input("\nAccount Username: ")
+                print("\nEnter the Username for your " + recordName + " account. (Leave blank and press enter if no username was linked to the account)")
+                recordUser = input("\nAccount/Record Username: ")
 
                 if recordUser == '0':
                     return '0'
@@ -308,6 +308,11 @@ def addRecord(userId):
 
                 if recordUser.isspace() or recordUser == "":
                     break
+
+                if len(recordUser) < 3:
+                    print("\nRecord username must be at least 3 characters long. \nPress any key to try again...")
+                    getch()
+                    continue
 
                 recordUser = validateRecordPasswordAndEmail(recordUser)
 
@@ -378,7 +383,7 @@ def addRecord(userId):
                             getch()
                             clear()
                         elif passSelect != '1' or passSelect != '2':
-                            print("\nPlease select a number between 1 and 2.\nPress any key to try again...")
+                            print("\nPlease select a number between 0 and 2.\nPress any key to try again...")
                             getch()
                             clear()
 
@@ -400,7 +405,7 @@ def addRecord(userId):
                             return '0'
 
                         if recordpassword.isspace() or recordpassword == "":
-                            print("\nPassword cannot be empty.")
+                            print("\nRecord password cannot be empty.")
                             print("Press any key to try again...")
                             getch()
                             continue
@@ -588,7 +593,7 @@ def updateRecord(userId):
                                 while True:
                                     clear()
                                     print("--------------Update Record Email------------------\n[Enter '0' if you wish to go back to the previous screen]\n")
-                                    newEmail = input("Enter the new record email (Leave blank and press enter if no email linked to the account): ")
+                                    newEmail = input("Enter the new record email (Leave blank and press enter if no email was linked to the account): ")
 
                                     if newEmail == '0':
                                         break
@@ -637,7 +642,7 @@ def updateRecord(userId):
                                 while True:
                                     clear()
                                     print("--------------Update Record Username------------------\n[Enter '0' if you wish to go back to the previous screen]\n")
-                                    newRecordUserName = input("Enter the new record username (Leave blank and press enter if no username linked to the account): ")
+                                    newRecordUserName = input("Enter the new record username (Leave blank and press enter if no username was linked to the account): ")
 
                                     if newRecordUserName == '0':
                                         break
@@ -654,6 +659,11 @@ def updateRecord(userId):
                                         getch()
                                         clear()
                                         break
+
+                                    if len(newRecordUserName) < 3:
+                                        print("\nRecord username must be at least 3 characters long. \nPress any key to try again...")
+                                        getch()
+                                        continue
 
 
                                     newRecordUserName = validateRecordPasswordAndEmail(newRecordUserName)

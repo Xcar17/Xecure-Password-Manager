@@ -417,7 +417,7 @@ def update_master_password(id):
             print("Press any key to go back...")
             getch()
             clear()
-            break
+            continue
 
 
         except socket.gaierror:

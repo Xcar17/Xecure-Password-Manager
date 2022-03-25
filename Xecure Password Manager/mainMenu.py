@@ -422,6 +422,8 @@ def register():
                 while True:
                         clear()
                         print("--------------Register------------------\n[Enter '0' if you wish to go back to the previous screen]")
+                        print("\nPlease enter a password for your Xecure Password Manager Account. You will use this to log into the application.")
+
                         secretPass = hidePassword()
 
                         if secretPass == '0':

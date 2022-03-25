@@ -3,7 +3,7 @@ from mysql.connector import errorcode
 from cryptography.fernet import Fernet
 import mysql.connector
 
-DB_NAME = "XecuredDBTest11"
+DB_NAME = "XecuredDBTest12"
 
 def use_database(DB_NAME):
     cursor.execute("USE {}".format(DB_NAME))
@@ -310,7 +310,7 @@ def printAllRecsByID(id, nameOnly = False):
             usr_name  = decrypt(usrID, rec[4])
             acct_pass  = decrypt(usrID, rec[5])
             if not nameOnly:
-                print(f"Record Name:{recName}\nAccount Email:{email}\nUser Name:{usr_name}\nAccount Password:{acct_pass}\n\n--------------------------\n")
+                print(f"Record Name: {recName}\nRecord Email: {email}\nRecord Username: {usr_name}\nRecord Password: {acct_pass}\n\n--------------------------\n")
             else:
                 print(f"\t-{recName}")
 
