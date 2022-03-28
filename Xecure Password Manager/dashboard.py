@@ -6,8 +6,6 @@
 # This module contains the primary menu once the user logs into the application. Contains all needed controls.
 
 import os
-import sys
-
 from clear import clear, myExit
 from settings import settings
 from msvcrt import getch
@@ -770,7 +768,7 @@ def viewAll(userId):
 def recordNamesOnly(userId, value):
     clear()
 
-    print("--------------View All Record------------------\n")
+    print("--------------View All Record Names------------------\n")
 
     if checkIfNoRecords(userId) == 0:
         print("**No records in database**")

@@ -1,5 +1,4 @@
 import socket
-
 from database import cursor
 from dbsetup import decrypt, update_master_email, update_user_ID, checkDuplicateEmail
 from random_pwd_generator import generate_password

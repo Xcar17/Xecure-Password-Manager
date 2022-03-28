@@ -6,13 +6,12 @@
 
 #This module contains the settings controls that give users control over their data.
 import socket
-
 from clear import clear
 from msvcrt import getch
 from dbsetup import delete_record, delete_all_records, fetch_rec_by_id_gen, checkIfNoRecords
 from passwordRecovery import update_master_password, changeMasterEmail
-from input_val import validateRecordName, validateEmail, validatePassword
-import smtplib
+from input_val import validateRecordName
+
 
 #This function is the settings menu that contains the controls of delete a record, delete all records, change email,
 #change password, change security question (Tentative Feature), and Back to dashboard.
