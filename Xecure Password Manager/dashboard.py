@@ -12,7 +12,7 @@ from msvcrt import getch
 import pyperclip
 from dbsetup import update_record_name, update_record_email, printAllRecsByID, \
     update_record_username, update_record_password, adding_new_enc_record, fetch_rec_by_id_gen, checkIfNoRecords, checkDuplicateRecName
-from random_pwd_generator import generate_password
+from random_pwd_generator import generate_password, generate_password_long
 from passwordRecovery import retrieveIDByName
 from input_val import validateRecordName, validateRecordPasswordAndEmail, validateEmail, validateRecordPass
 import threading
@@ -41,7 +41,7 @@ def dashBoard(currentUser):
             print("[3] Update Record")
             print("[4] View All Records")
             print("[5] View All Record Names Only")
-            print("[6] User Settings")
+            print("[6] Settings & Delete Records")
             print("[7] Logout")
             print("[8] Exit\n")
             menuSelection = int(input("Selection: "))
@@ -354,7 +354,7 @@ def addRecord(userId):
 
                 if menuSelection == '1':
 
-                    recordpassword = generate_password()
+                    recordpassword = generate_password_long()
                     moveOn = False
                     while moveOn == False:
                         clear()

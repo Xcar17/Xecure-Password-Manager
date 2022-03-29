@@ -20,7 +20,7 @@ def settings(userId):
     while True:
         try:
             clear()
-            print("--------------Settings------------------")
+            print("--------------Settings & Delete Records------------------")
             # Presents user's with all options available
             print("\nPlease select one of the following options\n")
             print("[1] Delete a Record")

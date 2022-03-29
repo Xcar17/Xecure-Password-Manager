@@ -3,7 +3,7 @@ from mysql.connector import errorcode
 from cryptography.fernet import Fernet
 import mysql.connector
 
-DB_NAME = "XecuredDBTest12"
+DB_NAME = "XecuredDBTest17"
 
 def use_database(DB_NAME):
     cursor.execute("USE {}".format(DB_NAME))

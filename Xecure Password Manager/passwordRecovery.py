@@ -119,7 +119,7 @@ def forgot_update_password():
                 getch()
                 continue
 
-
+            email = email.lower()
 
             if verifyEmail(email):
                 #generates a verification code and emails it to user
@@ -285,6 +285,8 @@ def update_master_password(id):
                       "\nPress any key to try again...")
                 getch()
                 continue
+
+            email = email.lower()
 
             if verifyEmail(email):
                 idOfEnteredEmail = retrieveIDByEmail(email)
@@ -474,6 +476,8 @@ def changeMasterEmail(id):
                 getch()
                 continue
 
+            email = email.lower()
+
             if verifyEmail(email):
                 idOfEnteredEmail = retrieveIDByEmail(email)
                 if id == str (idOfEnteredEmail):
@@ -515,9 +519,6 @@ def changeMasterEmail(id):
                                 print("\nCode verified! Please enter your new email: ")
                                 inputEmail = input("\nNew Email: ")
 
-                                while checkDuplicateEmail(inputEmail):
-                                    inputEmail = input("\nEmail Taken. Please enter another email for your account: ")
-
                                 if inputEmail == '0':
                                     print("\nEmail reset has been cancelled!\nPress any key to go back...")
                                     getch()
@@ -534,7 +535,17 @@ def changeMasterEmail(id):
                                     clear()
                                     continue
 
+                                inputEmail = inputEmail.lower()
+
+                                while checkDuplicateEmail(inputEmail):
+                                    inputEmail = input("\nEmail Taken. Please enter another email for your account: ")
+                                    if inputEmail == '0':
+                                        return '0'
+                                    inputEmail = inputEmail.lower()
+
                                 email = validateEmail(inputEmail)
+
+
 
 
 
@@ -553,6 +564,8 @@ def changeMasterEmail(id):
                                           "\nPress any key to try again...")
                                     getch()
                                     continue
+
+                                email = email.lower()
 
                                 break
 
@@ -709,6 +722,7 @@ def usernameRecovery():
                 getch()
                 continue
 
+            email = email.lower()
 
             if verifyEmail(email):
                 retrieveUsername(email)

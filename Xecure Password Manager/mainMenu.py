@@ -297,8 +297,13 @@ def getEmail():
                 clear()
                 continue
 
+            useremail = useremail.lower()
+
             while checkDuplicateEmail(useremail):
                 useremail = input("\nEmail Taken. Please enter another email for your account: ")
+                if useremail == '0':
+                    return '0'
+                useremail = useremail.lower()
 
 
             useremail = validateEmail(useremail)
@@ -343,8 +348,11 @@ def register():
                     if escape == 1:#Makes sure email only gets called once
                         usrEmail = getEmail()
 
+
                         if usrEmail == '0':
                             return '0'
+
+                        usrEmail = usrEmail.lower()
 
                         escape += 1
                         hashEmail = hashlib.pbkdf2_hmac('sha256', usrEmail.encode("utf-8"), b'&%$#f^',
