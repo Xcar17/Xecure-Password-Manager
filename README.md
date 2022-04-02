@@ -4,8 +4,10 @@ The project is a password manager application for Windows computers used to secu
 
 The application is called Xecure Password Manager and it was inspired by applications like KeePass, and LastPass and it contains all of the major features that these application have. All of the previously mentioned features are the standard in the password manager market, and they will be included in the Xecure Password Manager application at no cost to the users. In addition to being a free application, Xecure Password Manager will not contain any ads, there are no password or account limits, and it will not store or use user data for any other purpose. This is what separates Xecure Password Manager from the competition.
 
+======================================
 
-Proposed Implementation Languages
+#Proposed Implementation Languages
+
 The password manager application was developed on a Windows computer by using the latest versions of Python 3 (version 3.9.7) and MySQL (version 8).
 Libraries, packages, development kits
 The password manager application will use the following libraries:
@@ -24,7 +26,9 @@ The password manager application will use the following libraries:
 •	threading – Used to wipe the clipboard while the user continues to use the application.
 
 
-Additional Software/Equipment Needed
+======================================
+#Additional Software/Equipment Needed
+
 A Windows operating system is required, as well as Python (version 3.9.7) and a MySQL (version 8) database. See below for instructions on how to download and setup both Python and MySQL.
 MySQL Installation Guide: 
 These steps will guide you through the installation and setup of the MySQL Community Server for the required database of this application.
@@ -61,7 +65,9 @@ These steps will guide you through the installation and setup of the MySQL Commu
 31.	You have successfully installed the MySQL database.
 
 
+======================================
 To use with MySQL Workbench:
+
 1.	Go to start and search for “workbench”
 2.	Open the MySQL Workbench
 3.	Once the application opens, double click the “Local instance” below the “MySQL Connections”.
