@@ -15,19 +15,19 @@ The password manager application was developed on a Windows computer by using th
 
 The password manager application will use the following libraries:
 
-•	Hashlib – Used for hashing.
-•	cryptography.fernet – Used to encrypt.
-•	msvcrt – Used to prevent the command screen from continuing until a key is pressed.
-•	mysql.connector – Used to connect to the database.
-•	os – Used to change the title of the command line screen.
-•	Sys – Used alongside getpass to hide passwords in the command line screen.
-•	getpass – Used to hide password in the command line screen. 
-•	random – Used to generate random passwords and codes.
-•	smtplib – Used for emailing capabilities.
-•	socket – Used alongside smtplib to send emails, and email error handling.
-•	time – Used alongside pyperclip to determine when to wipe clipboard.
-•	pyperclip – Used to save record’s password into the computer’s clipboard.
-•	threading – Used to wipe the clipboard while the user continues to use the application.
+-	Hashlib – Used for hashing.
+-	cryptography.fernet – Used to encrypt.
+-	msvcrt – Used to prevent the command screen from continuing until a key is pressed.
+-	mysql.connector – Used to connect to the database.
+-	os – Used to change the title of the command line screen.
+-	Sys – Used alongside getpass to hide passwords in the command line screen.
+-	getpass – Used to hide password in the command line screen. 
+-	random – Used to generate random passwords and codes.
+-	smtplib – Used for emailing capabilities.
+-	socket – Used alongside smtplib to send emails, and email error handling.
+-	time – Used alongside pyperclip to determine when to wipe clipboard.
+-	pyperclip – Used to save record’s password into the computer’s clipboard.
+-	threading – Used to wipe the clipboard while the user continues to use the application.
 
 
 # Additional Software/Equipment Needed
