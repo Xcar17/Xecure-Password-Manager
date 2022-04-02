@@ -14,10 +14,9 @@ The password manager application was developed on a Windows computer by using th
 # Libraries, packages, development kits
 
 The password manager application will use the following libraries:
+
 •	Hashlib – Used for hashing.
-
 •	cryptography.fernet – Used to encrypt.
-
 •	msvcrt – Used to prevent the command screen from continuing until a key is pressed.
 •	mysql.connector – Used to connect to the database.
 •	os – Used to change the title of the command line screen.
