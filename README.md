@@ -1,4 +1,4 @@
-# Xecure-Password-Manager
+# Xecure Password Manager
 
 The project is a password manager application for Windows computers used to securely store and manage log in information for various accounts. It uses a “master” password to provide access into the user’s account with all the passwords. The application can also copy a record’s password into the computer’s clipboard. This password will then be wiped from the clipboard after fifteen seconds or if the user closes the application. The application has connectivity to a MYSQL database that is used to securely store the user’s information. In order to protect the information in the database the application uses the well-established AES encryption and SHA256 hashing algorithms. Additionally, the users have the option to generate unique and complex passwords for every record entered. Users will also have the option of entering their own passwords and the application will guide them every step of the way. Lastly, the program has features that allows users to reset their “master” password and email if they forget it or wish to change it.
 
