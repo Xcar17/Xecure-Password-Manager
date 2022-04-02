@@ -34,7 +34,7 @@ def dashBoard(currentUser):
         try:
             clear()
             usrId = retrieveIDByName(currentUser)
-            print("--------------Dash Board------------------")  # Presents user's with all options available
+            print("--------------Dashboard------------------")  # Presents user's with all options available
             print("\nPlease select between the following options:\n")
             print("[1] Retrieve a Record")
             print("[2] Add a New Record")
