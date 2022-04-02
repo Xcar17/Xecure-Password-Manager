@@ -9,7 +9,10 @@ The application is called Xecure Password Manager and it was inspired by applica
 # Proposed Implementation Languages
 
 The password manager application was developed on a Windows computer by using the latest versions of Python 3 (version 3.9.7) and MySQL (version 8).
-Libraries, packages, development kits
+
+
+# Libraries, packages, development kits
+
 The password manager application will use the following libraries:
 •	Hashlib – Used for hashing.
 •	cryptography.fernet – Used to encrypt.
