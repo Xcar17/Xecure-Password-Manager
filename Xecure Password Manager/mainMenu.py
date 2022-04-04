@@ -17,6 +17,7 @@ from passwordRecovery import usernameRecovery, forgot_update_password, retrieveI
 from hashing import combHash
 from input_val import validatePassword, validateRecordPass, validateEmail, validateUsername
 from hidePassword import hidePassword
+from test import logo
 
 
 #Called when a new user wants to register. Checks inside the db to see if the username entered is already in the db
@@ -54,6 +55,10 @@ def checkLogin(file, string):
 #First screen the user will be greeted with. Contains the login, register, and exit controls.
 def mainMenu():
     os.system("title Xecure Password Manager")#Changes title of screen
+    logo()
+    print("                                            Press any key to continue...")
+    getch()
+
     while True:
         try:
                 clear()
