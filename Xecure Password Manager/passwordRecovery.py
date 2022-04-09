@@ -6,7 +6,7 @@ import smtplib
 from hashing import combHash
 import hashlib
 from msvcrt import getch
-from clear import myExit, clear
+from clear import clear
 from input_val import validatePassword, noleadingspace, validateEmail, validateRecordPass
 from hidePassword import hidePassword
 import time

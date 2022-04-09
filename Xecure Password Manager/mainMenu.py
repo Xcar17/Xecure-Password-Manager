@@ -13,11 +13,11 @@ from clear import myExit, clear
 from dashboard import dashBoard
 from dbsetup import add_log
 from dbsetup import encryptAll, checkDuplicateEmail
-from passwordRecovery import usernameRecovery, forgot_update_password, retrieveIDByName, retrieveIDByEmail
+from passwordRecovery import usernameRecovery, forgot_update_password
 from hashing import combHash
 from input_val import validatePassword, validateRecordPass, validateEmail, validateUsername
 from hidePassword import hidePassword
-from test import logo
+from logo import shield
 
 
 #Called when a new user wants to register. Checks inside the db to see if the username entered is already in the db
@@ -55,7 +55,7 @@ def checkLogin(file, string):
 #First screen the user will be greeted with. Contains the login, register, and exit controls.
 def mainMenu():
     os.system("title Xecure Password Manager")#Changes title of screen
-    logo()
+    shield()
     print("                                            Press any key to continue...")
     getch()
 

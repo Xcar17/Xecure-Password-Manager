@@ -104,52 +104,11 @@ def prompt_user2():
     recordPassword = input("What is the password for this account : ")
     add_log2(id, recordName, recordEmail, recordUserName, recordPassword)
 
-#prompt_user2()
-
-
-##################################################################
-
-# TABLES3 = {}
-#
-# TABLES3['SecTab'] = (
-#     "CREATE TABLE IF NOT EXISTS Rec_Sec ("
-#     " recordId int(11) NOT NULL AUTO_INCREMENT, userId varchar(250), FOREIGN KEY(userId) REFERENCES Registered_Users(id),"
-#     " Answer1 varchar(250) NOT NULL, Answer2 varchar(250) NOT NULL, Answer3 varchar(250) NOT NULL, "
-#     "Answer4 varchar(250) NOT NULL,  Answer5 varchar(250) NOT NULL,PRIMARY KEY (recordId))"
-# )
-#
-#
-# def create_tables3():
-#     cursor.execute("USE {}".format(DB_NAME))
-#
-#     for table_name in TABLES3:
-#         table_description = TABLES3[table_name]
-#         try:
-#             #print("Creating table ({}) ".format(table_name), end="")
-#             cursor.execute(table_description)
-#         except mysql.connector.Error as err:
-#             #if err.errno == errorcode.ER_TABLE_EXISTS_ERROR:
-#                 #print("Table Already Exists")
-#             #else:
-#                 print(err.msg)
-#     db.commit()
-#
-#
-# create_tables3()
-
-
-
 def add_log3(userId, Answer1, Answer2, Answer3, Answer4, Answer5):
     sql = ("INSERT INTO Rec_Sec(userId, Answer1, Answer2, Answer3, Answer4, Answer5) VALUES (%s, %s, %s, %s, %s, %s)")
     cursor.execute(sql, (userId, Answer1, Answer2, Answer3, Answer4, Answer5))
     db.commit()
     log_id = cursor.lastrowid
-    #print ("Added log {}".format(log_id))
-
-
-
-
-
 
 #################################################Setup Ends Here##################################################################################################
 
@@ -163,11 +122,8 @@ def update_record_name(newRecord, id, rcName):
 def update_user_ID(newID, oldID):
     alterOff = "SET FOREIGN_KEY_CHECKS = 0;"
     cursor.execute(alterOff)
-
     sql = ("UPDATE User_Records SET userId = %s WHERE userId = %s")
     cursor.execute(sql, (newID, oldID))
-
-
     sql = ("UPDATE Registered_Users SET id = %s WHERE id = %s")
     cursor.execute(sql, (newID, oldID))
     alterOn = "SET FOREIGN_KEY_CHECKS = 1;"
@@ -191,7 +147,6 @@ def update_record_username(text, id, rcName):
 def update_record_password(text, id, rcName):
     oldCiphRecEmail = fetch_cipher_by_id_gen(id, rcName, "Account_Password")
     newCipherEmail = encryptAll(id, [text])[0]
-    #try:
     sql = ("UPDATE User_Records SET Account_Password = %s WHERE userId = %s AND Account_Password = %s")
     cursor.execute(sql, (newCipherEmail, id, oldCiphRecEmail))
     db.commit()
@@ -344,16 +299,14 @@ def fetch_rec_by_id_gen(id, gen_value, gen_cat):
     j = 0
     for rec in results:
         if decrypt(id, rec[col_i]) == gen_value:
-            # now decrypt everything else
+            # Now decrypt everything else.
             req_rec = [rec[0], rec[1] ]
             for i in range(2, len(rec)):
                 req_rec.append(decrypt(id, rec[i]))
             return req_rec
-    #print("Couldn't find record matching id and name")
     return "Record not Found..."
 
 def fetch_cipher_by_id_gen(id, recName, gen_cat):
-    # try:
     sql0 = ("select * from INFORMATION_SCHEMA.COLUMNS where TABLE_NAME='User_Records' ")
     cursor.execute(sql0)
     columns = cursor.fetchall()

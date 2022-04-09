@@ -1,16 +1,14 @@
 #Xecure Password Manager
 #By Carlos Ocasio
-#Password Manager lets users create an account and allows them to safely store all of their login credentials for
-#various sites. Login credentials can only be accessed by the root user. Application uses SHA256 to hash login
-#credentials and encrypts the records of the user inside a secure MySQL database.
 
-#This module contains the functions used throughout the application like clear and exit
+#This module contains the function used throughout the application to clear the command line screen, and the function
+#to exit the application properly.
 
-import os
-from msvcrt import getch
-import pyperclip
+import os #Used to change the title of the command line screen.
+from msvcrt import getch #Used to prevent the command screen from continuing until a key is pressed
+import pyperclip #Used to save record’s password into the computer’s clipboard.
 
-#Function to clear cmd
+#Function to clear the command screen.
 def clear():
     os.system("cls")
 
@@ -40,7 +38,7 @@ def myExit():
                 getch()
                 clear()
 
-        except Exception:
+        except Exception:#Catches exeptions that are not expected
             print("\nInvalid Input. Please enter a number between 1 and 2.")
             print("Press any key to try again...")
             getch()
