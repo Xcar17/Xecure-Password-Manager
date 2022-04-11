@@ -240,12 +240,11 @@ def addRecord(userId):
 
 
                 if checkDuplicateRecName(userId, recordName): #Checking for duplicate records.
-                    print("\nRecord name taken, please choose another one.")
+                    print("\nRecord name taken. Please choose another record name.")
                     print("Press any key to try again...")
                     getch()
                     clear()
                     continue
-
 
                 else:   #Continue if no errors found in name
                     break
