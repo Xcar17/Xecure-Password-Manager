@@ -104,7 +104,7 @@ def forgot_update_password():
             print("--------------Reset Password------------------\n[Enter '0' if you wish to go back to the previous"
                   " screen]")
             print("\n**Verification is needed in order to reset your password**")
-            print("Please enter the email associated with your account:\n")
+            print("\nPlease enter the email associated with your account:\n")
             email = input("Email: ")
 
             if email == '0': #Command to go back to the previous screen.
@@ -262,6 +262,13 @@ def forgot_update_password():
             print("Press any key to try again...")
             getch()
             clear()
+
+        except TimeoutError:#Connection error exception.
+            print("\nConnection error. Please check your internet connection.")
+            print("Press any key to try again...")
+            getch()
+            clear()
+
         except Exception:#Other errors.
             print("\nInvalid input.")
             print("Press any key to try again...")
@@ -451,6 +458,12 @@ def update_master_password(id):
             getch()
             clear()
 
+        except TimeoutError:#Connection error exception.
+            print("\nConnection error. Please check your internet connection.")
+            print("Press any key to try again...")
+            getch()
+            clear()
+
         except Exception:#Other errors.
             print("\nInvalid Input.")
             print("Press any key to try again...")
@@ -466,7 +479,9 @@ def changeMasterEmail(id):
             print("--------------Change Account Email------------------\n[Enter '0' if you wish to go back to the"
                   " Settings screen]")
             print("\n**Verification is needed in order to change your email**")
-            email = input("\nPlease enter the email associated with your account: ")
+
+            print("\nPlease enter the email associated with your account: ")
+            email = input("\nEmail: ")
 
             if email == '0':#Command to go back to previous screen.
                 return '0'
@@ -626,6 +641,12 @@ def changeMasterEmail(id):
         getch()
         clear()
 
+    except TimeoutError:  # Connection error exception.
+        print("\nConnection error. Please check your internet connection.")
+        print("Press any key to try again...")
+        getch()
+        clear()
+
     except Exception:#Other errors.
         print("\nInvalid Input.")
         print("Press any key to try again...")
@@ -759,6 +780,12 @@ def usernameRecovery():
             break
 
         except socket.gaierror:#Connection error exception.
+            print("\nConnection error. Please check your internet connection.")
+            print("Press any key to try again...")
+            getch()
+            clear()
+
+        except TimeoutError:#Connection error exception.
             print("\nConnection error. Please check your internet connection.")
             print("Press any key to try again...")
             getch()

@@ -450,8 +450,8 @@ def register():
                             continue
 
                         elif validatePass == 3: #If input does not follow proper format.
-                            print("\nYour password must contain at least one of the following symbols: ~!@#$%^&*_-+='|\
-                            (){}[]:;\"\'<>,.?/"
+                            print("\nYour password must contain at least one of the following symbols: ~!@#$%^&*_-+='|"
+                            "(){}[]:;\"\'<>,.?/"
                                   "\nYour password must also contain at least one number, one uppercaser letter, and "
                                   "one lowercase letter."
                                   "\nPress any key to try again...")

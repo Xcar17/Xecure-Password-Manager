@@ -18,3 +18,4 @@ def combHash(pwd, uname):
 
     return plain_result_hash_hex
 
+print(combHash("hello", "123"))
