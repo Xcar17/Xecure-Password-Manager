@@ -171,6 +171,7 @@ def getRecord(userId):
 
                     #Starting a new thread to countdown the 15 seconds.
                     flush = threading.Thread(target=flushPasswordThread, args=())
+                    flush.daemon = True
                     flush.start()
                     print("Press any key to go back to Dashboard...")
                     getch()

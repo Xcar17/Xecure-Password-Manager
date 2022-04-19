@@ -10,7 +10,7 @@ from cryptography.fernet import Fernet #Used to encrypt.
 import mysql.connector #Used to connect to database.
 
 ###################################################MAKE IT xecureddb########################################
-DB_NAME = "XecuredDBTest18" #This will be the name of the database.
+DB_NAME = "xecureddb" #This will be the name of the database.
 
 #This code will tell the program what database to use.
 def use_database(DB_NAME):

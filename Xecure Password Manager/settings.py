@@ -178,7 +178,8 @@ def deleteAllRecords(userId):
         confirmation = "0"
         while confirmation != "1" or confirmation != "2" or confirmation == "0":#User confirm action of delete all.
             clear()
-            print("--------------Delete All Records------------------")
+            print("--------------Delete All Records------------------\n[Enter '0' if you wish to go back to "
+                  "the previous screen]")
 
             #Checking if users has records in database. Error message will be displayed if no records.
             if checkIfNoRecords(userId) == 0:
